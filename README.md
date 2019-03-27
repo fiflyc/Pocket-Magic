@@ -5,5 +5,5 @@
 ## Ссылки
 * **[Описание проекта](https://wiki.compscicenter.ru/index.php/Pocket_Magic)**
 * **[Wiki](https://github.com/fiflyc/Pocket-Magic/wiki)**
-## Список обновлений
-Пока ничего нет:(
+## Как установить
+Пока никак:(
