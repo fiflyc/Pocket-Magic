@@ -11,4 +11,22 @@
         <item name="android:background">@drawable/menu_toolbar</item>
     </style>
 
+    <style name="HPBar" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressBackgroundTint">#2A2C2A</item>
+        <item name="android:progressTint">#4CAF50</item>
+        <item name="android:minWidth">200dp</item>
+    </style>
+
+    <style name="MPBar" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressBackgroundTint">#2A2C2A</item>
+        <item name="android:progressTint">#2196F3</item>
+        <item name="android:minWidth">200dp</item>
+    </style>
+
+    <style name="EnemyHPBar" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressBackgroundTint">#2A2C2A</item>
+        <item name="android:progressTint">#F44336</item>
+        <item name="android:minWidth">200dp</item>
+    </style>
+
 </resources>

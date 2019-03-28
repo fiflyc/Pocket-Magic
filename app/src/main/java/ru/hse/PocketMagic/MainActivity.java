@@ -1,5 +1,6 @@
 package ru.hse.PocketMagic;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 view.startAnimation(animAlpha);
+                Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                startActivity(intent);
             }
         });
 
