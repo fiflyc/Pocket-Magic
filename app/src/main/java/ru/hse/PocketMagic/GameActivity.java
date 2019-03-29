@@ -10,9 +10,15 @@ import android.widget.TextView;
 
 public class GameActivity extends AppCompatActivity {
 
+    private int maxHP;
+    private int maxMP;
+
     private ProgressBar playerHP;
+    private TextView valueHP;
     private ProgressBar playerMP;
+    private TextView valueMP;
     private ProgressBar opponentHP;
+    private TextView valueOHP;
     private TextView opponentName;
     private ImageView opponentSpell;
 
@@ -24,8 +30,12 @@ public class GameActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         playerHP = findViewById(R.id.playerHP);
+        valueHP = findViewById(R.id.valueHP);
         playerMP = findViewById(R.id.playerMP);
+        valueMP = findViewById(R.id.valueMP);
         opponentHP = findViewById(R.id.opponentHP);
+        valueOHP = findViewById(R.id.valueOHP);
+
         opponentName = findViewById(R.id.opponentName);
         opponentSpell = findViewById(R.id.opponentSpell);
     }
@@ -37,16 +47,30 @@ public class GameActivity extends AppCompatActivity {
         opponentName.setText(name);
     }
 
+    public void setMaxHP(int value) {
+        maxHP = value;
+    }
+
+    public void setMaxMP(int value) {
+        maxMP = value;
+    }
+
     public void setPlayerHP(int value) {
         playerHP.setProgress(value);
+        String text = value + "/" + maxHP;
+        valueHP.setText(text);
     }
 
     public void setPlayerMP(int value) {
         playerMP.setProgress(value);
+        String text = value + "/" + maxMP;
+        valueMP.setText(text);
     }
 
     public void setOpponentHP(int value) {
         opponentHP.setProgress(value);
+        String text = value + "/" + maxHP;
+        valueOHP.setText(text);
     }
 
     public void endGame(GameResult result) {
