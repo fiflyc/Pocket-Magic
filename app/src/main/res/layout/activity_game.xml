@@ -126,4 +126,16 @@
         app:layout_constraintStart_toStartOf="@+id/opponentHP"
         app:layout_constraintTop_toTopOf="@+id/opponentHP" />
 
+    <android.gesture.GestureOverlayView
+        android:id="@+id/gestureListener"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gestureColor="#3F51B5"
+        android:gestureStrokeWidth="50"
+        android:uncertainGestureColor="#B3BDFC"
+        app:layout_constraintBottom_toTopOf="@+id/playerMP"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/opponentHP" />
+
 </android.support.constraint.ConstraintLayout>

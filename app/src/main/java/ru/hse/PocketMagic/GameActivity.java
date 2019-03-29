@@ -1,12 +1,16 @@
 package ru.hse.PocketMagic;
 
 import android.content.pm.ActivityInfo;
-import android.support.v7.app.AppCompatActivity;
+import android.gesture.GestureLibraries;
+import android.gesture.GestureLibrary;
+import android.gesture.GestureOverlayView;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -19,8 +23,13 @@ public class GameActivity extends AppCompatActivity {
     private TextView valueMP;
     private ProgressBar opponentHP;
     private TextView valueOHP;
+
     private TextView opponentName;
     private ImageView opponentSpell;
+
+    private GestureLibrary gestureLibrary;
+    private GestureOverlayView gestureOverlayView;
+    private GestureListener gestureListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +37,15 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        gestureLibrary = GestureLibraries.fromRawResource(getApplicationContext(), R.raw.gestures);
+        gestureOverlayView = findViewById(R.id.gestureListener);
+        if (!gestureLibrary.load()) {
+            finish();
+        }
+
+        gestureListener = new GestureListener(gestureLibrary, this);
+        gestureOverlayView.addOnGesturePerformedListener(gestureListener);
 
         playerHP = findViewById(R.id.playerHP);
         valueHP = findViewById(R.id.valueHP);
@@ -79,5 +97,9 @@ public class GameActivity extends AppCompatActivity {
 
     public void showOpponentSpell(String spell) {
 
+    }
+
+    public void showPlayerSpell(String spell) {
+        Toast.makeText(this.getApplicationContext(), spell, Toast.LENGTH_LONG).show();
     }
 }
