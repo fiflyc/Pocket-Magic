@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
                 view.startAnimation(animAlpha);
                 Intent intent = new Intent(MainActivity.this, GameActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
