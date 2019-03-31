@@ -1,5 +1,6 @@
 package ru.hse.PocketMagic;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
@@ -92,7 +93,22 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void endGame(GameResult result) {
+        Intent intent = new Intent(GameActivity.this, GameResultsActivity.class);
 
+        switch (result) {
+            case WIN:
+                intent.putExtra("RESULT", 1);
+                break;
+            case LOSE:
+                intent.putExtra("RESULT", -1);
+                break;
+            case DRAW:
+                intent.putExtra("RESULT", 0);
+                break;
+        }
+
+        startActivity(intent);
+        finish();
     }
 
     public void showOpponentSpell(String spell) {
