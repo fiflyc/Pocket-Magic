@@ -59,7 +59,7 @@ public class GameActivity extends AppCompatActivity {
 
         controller = new Controller(this);
 
-        gestureListener = new GestureListener(gestureLibrary, this, controller);
+        gestureListener = new GestureListener(gestureLibrary, controller);
         gestureOverlayView.addOnGesturePerformedListener(gestureListener);
     }
 

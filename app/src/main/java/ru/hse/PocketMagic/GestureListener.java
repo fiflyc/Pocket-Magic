@@ -10,38 +10,23 @@ import java.util.ArrayList;
 public class GestureListener implements GestureOverlayView.OnGesturePerformedListener {
 
     private GestureLibrary gestureLibrary;
-    private GameActivity activity;
     private Controller controller;
 
-    public GestureListener(GestureLibrary gestureLibrary, GameActivity activity, Controller controller) {
+    public GestureListener(GestureLibrary gestureLibrary, Controller controller) {
         this.gestureLibrary = gestureLibrary;
-        this.activity = activity;
         this.controller = controller;
     }
 
     @Override
     public void onGesturePerformed(GestureOverlayView gestureOverlayView, Gesture gesture) {
         ArrayList<Prediction> predictionList = gestureLibrary.recognize(gesture);
-        int size = predictionList.size();
 
-        if (size > 0) {
-            StringBuilder stringBuilder = new StringBuilder();
+        if (predictionList.size() > 0) {
             Prediction firstPrediction = predictionList.get(0);
 
             if(firstPrediction.score > 3) {
-                String action = firstPrediction.name;
-
-                stringBuilder.append("You've casted ");
-                stringBuilder.append(action);
-
-                controller.playerSpell(action);
-            } else {
-                stringBuilder.append("Try to cast neatly.");
+                controller.playerSpell(firstPrediction.name);
             }
-
-            activity.showPlayerSpell(stringBuilder.toString());
-        } else {
-            activity.showPlayerSpell("OMG go learn spells!");
         }
     }
 }
