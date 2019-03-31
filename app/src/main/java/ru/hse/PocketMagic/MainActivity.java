@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         final Animation animAlpha = AnimationUtils.loadAnimation(this, R.anim.alpha);
 
         Button flameButton = findViewById(R.id.flameButton);
-        flameButton.setOnClickListener(new Button.OnClickListener(){
+        flameButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
                 view.startAnimation(animAlpha);
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button spellsButton = findViewById(R.id.spellsButton);
-        spellsButton.setOnClickListener(new Button.OnClickListener(){
+        spellsButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
             }
