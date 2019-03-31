@@ -1,37 +1,44 @@
 package ru.hse.PocketMagic;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GameResultsActivity extends AppCompatActivity {
 
+    private TextView textResult;
+    private ImageView pictureResult;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_game_results);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        TextView textResult = findViewById(R.id.textResult);
-        ImageView pictureResult = findViewById(R.id.pictureResult);
+        textResult = findViewById(R.id.textResult);
+        pictureResult = findViewById(R.id.pictureResult);
 
         int result = getIntent().getExtras().getInt("RESULT");
         switch (result) {
             case 1:
                 textResult.setText("VICTORY");
-                pictureResult.setImageBitmap(BitmapFactory.decodeFile("res/drawable/victory_image.png"));
+                pictureResult.setImageResource(R.drawable.victory_image);
                 break;
             case 0:
                 textResult.setText("DRAW");
-                pictureResult.setImageBitmap(BitmapFactory.decodeFile("res/drawable/draw_image.png"));
+                pictureResult.setImageResource(R.drawable.draw_image);
                 break;
             case -1:
                 textResult.setText("DEFEAT");
-                pictureResult.setImageBitmap(BitmapFactory.decodeFile("res/drawable/defeat_image.png"));
+                pictureResult.setImageResource(R.drawable.defeat_image);
                 break;
         }
 
