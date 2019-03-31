@@ -11,10 +11,12 @@ public class GestureListener implements GestureOverlayView.OnGesturePerformedLis
 
     private GestureLibrary gestureLibrary;
     private GameActivity activity;
+    private Controller controller;
 
-    public GestureListener(GestureLibrary gestureLibrary, GameActivity activity) {
+    public GestureListener(GestureLibrary gestureLibrary, GameActivity activity, Controller controller) {
         this.gestureLibrary = gestureLibrary;
         this.activity = activity;
+        this.controller = controller;
     }
 
     @Override
@@ -31,6 +33,8 @@ public class GestureListener implements GestureOverlayView.OnGesturePerformedLis
 
                 stringBuilder.append("You've casted ");
                 stringBuilder.append(action);
+
+                controller.playerSpell(action);
             } else {
                 stringBuilder.append("Try to cast neatly.");
             }

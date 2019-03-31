@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity {
 
+    private Controller controller;
+
     private int maxHP;
     private int maxMP;
 
@@ -45,9 +47,6 @@ public class GameActivity extends AppCompatActivity {
             finish();
         }
 
-        gestureListener = new GestureListener(gestureLibrary, this);
-        gestureOverlayView.addOnGesturePerformedListener(gestureListener);
-
         playerHP = findViewById(R.id.playerHP);
         valueHP = findViewById(R.id.valueHP);
         playerMP = findViewById(R.id.playerMP);
@@ -57,6 +56,11 @@ public class GameActivity extends AppCompatActivity {
 
         opponentName = findViewById(R.id.opponentName);
         opponentSpell = findViewById(R.id.opponentSpell);
+
+        controller = new Controller(this);
+
+        gestureListener = new GestureListener(gestureLibrary, this, controller);
+        gestureOverlayView.addOnGesturePerformedListener(gestureListener);
     }
 
     @Override
