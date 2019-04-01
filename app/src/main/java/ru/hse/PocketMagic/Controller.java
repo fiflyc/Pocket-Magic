@@ -1,8 +1,14 @@
 package ru.hse.PocketMagic;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
+import java.util.concurrent.TimeUnit;
+
 public class Controller {
     private Logic logic;
-    Thread bot;
+    //Thread bot;
+    Bot bot;
     GameActivity gameActivity;
 
     public Controller(GameActivity gameActivity) {
@@ -14,6 +20,8 @@ public class Controller {
         gameActivity.setPlayerHP(logic.getPlayerHP());
         gameActivity.setPlayerMP(logic.getPlayerMP());
         gameActivity.setOpponentHP(logic.getOpponentHP());
+        bot = new Bot();
+        bot.execute();
         //bot = new Thread(new Bot());
         //bot.start();
     }
@@ -23,20 +31,46 @@ public class Controller {
         gameActivity.setPlayerMP(logic.getPlayerMP());
         gameActivity.setOpponentHP(logic.getOpponentHP());
         if (logic.getOpponentHP() == 0) {
-            gameActivity.endGame(GameResult.WIN);
             //bot.interrupt();
+            bot.stop();
+            gameActivity.endGame(GameResult.WIN);
         }
     }
 
     public void opponentSpell(String spell) {
-
+        logic.opponentSpell(spell);
+        gameActivity.setPlayerHP(logic.getPlayerHP());
+        if (logic.getPlayerHP() == 0) {
+            //bot.interrupt();
+            bot.stop();
+            gameActivity.endGame(GameResult.LOSE);
+        }
     }
 
-    private class Bot implements Runnable {
+    private class Bot extends AsyncTask<Void, Void, Void> {
+        private boolean isAlive = true;
+
+        public void stop(){
+            isAlive = false;
+        }
+
         @Override
-        public void run() {
-            while (Thread.interrupted()) {
+        protected Void doInBackground(Void... voids) {
+            while (isAlive) {
+                publishProgress();
+                try {
+                    //Thread.sleep(10000);
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... voids) {
+            opponentSpell("");
         }
     }
 
@@ -68,10 +102,16 @@ public class Controller {
             return MAX_MP;
         }
 
-        public void playerSpell(String spell) {
+        synchronized public void playerSpell(String spell) {
             if (true) {
-                opponentHP = 0;
+                opponentHP -= 4;
                 playerMP -= 5;
+            }
+        }
+
+        synchronized public void opponentSpell(String spell) {
+            if (true) {
+                playerHP -= 5;
             }
         }
     }
