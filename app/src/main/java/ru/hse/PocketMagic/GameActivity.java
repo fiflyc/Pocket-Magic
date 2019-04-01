@@ -7,6 +7,7 @@ import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -116,7 +117,12 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void showOpponentSpell(String spell) {
+        opponentSpell.setVisibility(View.VISIBLE);
+        opponentSpell.setImageResource(R.drawable.fireball);
+    }
 
+    public void hideOpponentSpell() {
+        opponentSpell.setVisibility(View.INVISIBLE);
     }
 
     public void showPlayerSpell(String spell) {
