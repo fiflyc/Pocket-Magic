@@ -24,7 +24,7 @@ public class Controller {
     }
 
     public void playerSpell(String spell) {
-        if (logic.ableToThrowTheSpell(spell)) {
+        if (!logic.ableToThrowTheSpell(spell)) {
             gameActivity.showOutOfMN();
             return;
         }
@@ -104,8 +104,8 @@ public class Controller {
             gameActivity.showPlayerSpell(spell);
             if (true) {
                 //if (spell == "FireBall") {
-                opponentHP -= 4;
-                playerMP -= 5;
+                opponentHP -= 5;
+                playerMP -= 4;
             }
         }
 
