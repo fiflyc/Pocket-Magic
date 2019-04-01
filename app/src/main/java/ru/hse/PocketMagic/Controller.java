@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 public class Controller {
     private Logic logic;
-    //Thread bot;
     Bot bot;
     GameActivity gameActivity;
 
@@ -22,16 +21,17 @@ public class Controller {
         gameActivity.setOpponentHP(logic.getOpponentHP());
         bot = new Bot();
         bot.execute();
-        //bot = new Thread(new Bot());
-        //bot.start();
     }
 
     public void playerSpell(String spell) {
+        if (logic.ableToThrowTheSpell(spell)) {
+            gameActivity.showOutOfMN();
+            return;
+        }
         logic.playerSpell(spell);
         gameActivity.setPlayerMP(logic.getPlayerMP());
         gameActivity.setOpponentHP(logic.getOpponentHP());
         if (logic.getOpponentHP() == 0) {
-            //bot.interrupt();
             bot.stop();
             gameActivity.endGame(GameResult.WIN);
         }
@@ -41,7 +41,6 @@ public class Controller {
         logic.opponentSpell(spell);
         gameActivity.setPlayerHP(logic.getPlayerHP());
         if (logic.getPlayerHP() == 0) {
-            //bot.interrupt();
             bot.stop();
             gameActivity.endGame(GameResult.LOSE);
         }
@@ -59,7 +58,6 @@ public class Controller {
             while (isAlive) {
                 publishProgress();
                 try {
-                    //Thread.sleep(10000);
                     TimeUnit.SECONDS.sleep(5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -103,7 +101,9 @@ public class Controller {
         }
 
         synchronized public void playerSpell(String spell) {
+            gameActivity.showPlayerSpell(spell);
             if (true) {
+                //if (spell == "FireBall") {
                 opponentHP -= 4;
                 playerMP -= 5;
             }
@@ -113,6 +113,13 @@ public class Controller {
             if (true) {
                 playerHP -= 5;
             }
+        }
+
+        public boolean ableToThrowTheSpell(String spell) {
+            if (playerMP < 5) {
+                return false;
+            }
+            return true;
         }
     }
 }

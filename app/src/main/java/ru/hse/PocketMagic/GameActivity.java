@@ -122,4 +122,8 @@ public class GameActivity extends AppCompatActivity {
     public void showPlayerSpell(String spell) {
         Toast.makeText(this.getApplicationContext(), spell, Toast.LENGTH_LONG).show();
     }
+
+    public void showOutOfMN() {
+        Toast.makeText(this.getApplicationContext(), "Not enough mana for the spell", Toast.LENGTH_LONG).show();
+    }
 }
