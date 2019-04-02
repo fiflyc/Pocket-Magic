@@ -17,7 +17,7 @@ public class Controller {
     public Controller(GameActivity gameActivity) {
         this.gameActivity = gameActivity;
         logic = new Logic();
-        gameActivity.setOpponentName("Kolyan");
+        gameActivity.setOpponentName("Kappa, the Twitch meme");
         gameActivity.setMaxHP(logic.getMaxHp());
         gameActivity.setMaxMP(logic.getMaxMp());
         gameActivity.setPlayerHP(logic.getPlayerHP());

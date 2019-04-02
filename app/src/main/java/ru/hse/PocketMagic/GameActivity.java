@@ -5,6 +5,10 @@ import android.content.pm.ActivityInfo;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PointF;
+import android.media.FaceDetector;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -38,9 +42,21 @@ public class GameActivity extends AppCompatActivity {
 
     public class Caster {
 
+        private float x0;
+        private float y0;
+        private float x1;
+        private float y1;
+
         private String spell = null;
         private float x = -1;
         private float y = -1;
+
+        Caster(float x0, float y0, float x1, float y1) {
+            this.x0 = x0;
+            this.y0 = y0;
+            this.x1 = x1;
+            this.y1 = y1;
+        }
 
         public void setSpell(String spell) {
             this.spell = spell;
@@ -68,7 +84,12 @@ public class GameActivity extends AppCompatActivity {
         }
 
         private void sendCastInfo() {
-            controller.playerSpell(spell, Target.BODY);
+            if (x0 <= x && x <= x1 && y0 <= y && y <= y1) {
+                controller.playerSpell(spell, Target.BODY);
+            } else {
+                controller.playerSpell(spell, Target.NOWHERE);
+            }
+
             x = -1;
             y = -1;
             spell = null;
@@ -103,7 +124,8 @@ public class GameActivity extends AppCompatActivity {
 
         controller = new Controller(this);
 
-        Caster caster = this.new Caster();
+        Caster caster = this.new Caster(0, 0, 2000, 2000);
+
         opponentAvatar.setOnTouchListener(new TouchListener(caster));
         opponentAvatar.setEnabled(false);
         gestureOverlayView.addOnGesturePerformedListener(new GestureListener(gestureLibrary, caster));
@@ -173,5 +195,30 @@ public class GameActivity extends AppCompatActivity {
 
     synchronized public void sendNotification(String notification) {
        textNotifications.setText(notification);
+    }
+
+    private Caster createCaster() {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        Bitmap opponentPicture = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.temp_bot_image, options);
+
+        FaceDetector faceDetector = new FaceDetector(opponentPicture.getWidth(), opponentPicture.getHeight(), 1);
+        FaceDetector.Face[] faces = new FaceDetector.Face[1];
+        if (faceDetector.findFaces(opponentPicture, faces) == 0) {
+            sendAlert("No faces found!");
+            return null;
+        }
+
+        PointF midPoint = new PointF();
+        faces[0].getMidPoint(midPoint);
+        float eyesDistance = faces[0].eyesDistance();
+        float x0 = midPoint.x - eyesDistance * 2;
+        float y0 = midPoint.y - eyesDistance * 2;
+        float x1 = midPoint.x + eyesDistance * 2;
+        float y1 = midPoint.y + eyesDistance * 2;
+        return this.new Caster(x0, y0, x1, y1);
+    }
+
+    public void sendAlert(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 }
