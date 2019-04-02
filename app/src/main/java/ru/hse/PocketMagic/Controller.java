@@ -35,12 +35,12 @@ public class Controller {
         generation.stop();
     }
 
-    public void playerSpell(String spell) {
+    public void playerSpell(String spell, Target target) {
         if (!logic.ableToThrowTheSpell(spell)) {
             gameActivity.showOutOfMP();
             return;
         }
-        logic.playerSpell(spell);
+        logic.playerSpell(spell, target);
         gameActivity.setPlayerMP(logic.getPlayerMP());
         gameActivity.setOpponentHP(logic.getOpponentHP());
         if (logic.getOpponentHP() == 0) {
@@ -143,12 +143,13 @@ public class Controller {
             return MAX_MP;
         }
 
-        synchronized public void playerSpell(String spell) {
+        synchronized public void playerSpell(String spell, Target target) {
             gameActivity.showPlayerSpell(spell);
-            if (true) {
-                //if (spell == "FireBall") {
-                opponentHP -= 5;
+            if (true) { //if (spell == "FireBall") {
                 playerMP -= 4;
+                if (target == Target.BODY) {
+                    opponentHP -= 5;
+                }
             }
         }
 
