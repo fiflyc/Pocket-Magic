@@ -127,6 +127,17 @@
         app:layout_constraintStart_toStartOf="@+id/opponentHP"
         app:layout_constraintTop_toTopOf="@+id/opponentHP" />
 
+    <ImageView
+        android:id="@+id/opponentAvatar"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/gestureListener"
+        app:layout_constraintTop_toTopOf="@+id/gestureListener"
+        app:srcCompat="@mipmap/ic_launcher_background" />
+
     <android.gesture.GestureOverlayView
         android:id="@+id/gestureListener"
         android:layout_width="0dp"
@@ -137,6 +148,8 @@
         app:layout_constraintBottom_toTopOf="@+id/playerMP"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/opponentHP" />
+        app:layout_constraintTop_toBottomOf="@+id/opponentHP" >
+
+    </android.gesture.GestureOverlayView>
 
 </android.support.constraint.ConstraintLayout>

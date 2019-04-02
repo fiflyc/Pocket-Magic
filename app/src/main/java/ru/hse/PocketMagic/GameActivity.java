@@ -30,12 +30,11 @@ public class GameActivity extends AppCompatActivity {
 
     private TextView opponentName;
     private ImageView opponentSpell;
+    private ImageView opponentAvatar;
 
-    private GestureLibrary gestureLibrary;
     private GestureOverlayView gestureOverlayView;
-    private GestureListener gestureListener;
 
-    public class Cast {
+    public class Caster {
 
         private String spell = null;
         private float x = -1;
@@ -43,6 +42,9 @@ public class GameActivity extends AppCompatActivity {
 
         public void setSpell(String spell) {
             this.spell = spell;
+            gestureOverlayView.setVisibility(View.INVISIBLE);
+            opponentAvatar.setEnabled(true);
+            showPlayerSpell("Set target");
 
             if (x != -1 && y != -1) {
                 sendCastInfo();
@@ -52,6 +54,8 @@ public class GameActivity extends AppCompatActivity {
         public void setPos(float x, float y) {
             this.x = x;
             this.y = y;
+            gestureOverlayView.setVisibility(View.VISIBLE);
+            opponentAvatar.setEnabled(false);
 
             if (spell != null) {
                 sendCastInfo();
@@ -73,7 +77,7 @@ public class GameActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        gestureLibrary = GestureLibraries.fromRawResource(getApplicationContext(), R.raw.gestures);
+        GestureLibrary gestureLibrary = GestureLibraries.fromRawResource(getApplicationContext(), R.raw.gestures);
         gestureOverlayView = findViewById(R.id.gestureListener);
         if (!gestureLibrary.load()) {
             finish();
@@ -88,12 +92,14 @@ public class GameActivity extends AppCompatActivity {
 
         opponentName = findViewById(R.id.opponentName);
         opponentSpell = findViewById(R.id.opponentSpell);
+        opponentAvatar = findViewById(R.id.opponentAvatar);
 
         controller = new Controller(this);
 
-        gestureListener = new GestureListener(gestureLibrary, this.new Cast());
-        gestureOverlayView.addOnGesturePerformedListener(gestureListener);
-        gestureOverlayView.setOnTouchListener(gestureListener);
+        Caster caster = this.new Caster();
+        opponentAvatar.setOnTouchListener(new TouchListener(caster));
+        opponentAvatar.setEnabled(false);
+        gestureOverlayView.addOnGesturePerformedListener(new GestureListener(gestureLibrary, caster));
     }
 
     @Override
