@@ -25,7 +25,7 @@ public class Controller {
 
     public void playerSpell(String spell) {
         if (!logic.ableToThrowTheSpell(spell)) {
-            gameActivity.showOutOfMN();
+            gameActivity.showOutOfMP();
             return;
         }
         logic.playerSpell(spell);
