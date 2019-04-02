@@ -12,6 +12,7 @@ public class Controller {
     Bot bot;
     GameActivity gameActivity;
     ManaGeneration generation;
+    boolean theEnd = false;
 
     public Controller(GameActivity gameActivity) {
         this.gameActivity = gameActivity;
@@ -31,6 +32,7 @@ public class Controller {
     }
 
     public void endGame() {
+        theEnd = true;
         bot.stop();
         generation.stop();
     }
@@ -61,6 +63,9 @@ public class Controller {
     }
 
     private void throwOpponentSpell(String spell) {
+        if (theEnd) {
+            return;
+        }
         gameActivity.hideOpponentSpell();
         logic.opponentSpell(spell);
         gameActivity.setPlayerHP(logic.getPlayerHP());
