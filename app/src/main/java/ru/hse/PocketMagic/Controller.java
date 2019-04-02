@@ -16,7 +16,7 @@ public class Controller {
     public Controller(GameActivity gameActivity) {
         this.gameActivity = gameActivity;
         logic = new Logic();
-        gameActivity.setOpponentName("Larry");
+        gameActivity.setOpponentName("Kolyan");
         gameActivity.setMaxHP(logic.getMaxHp());
         gameActivity.setMaxMP(logic.getMaxMp());
         gameActivity.setPlayerHP(logic.getPlayerHP());
@@ -170,7 +170,7 @@ public class Controller {
         }
 
         synchronized public void playerSpell(String spell, Target target) {
-            gameActivity.showPlayerSpell(spell);
+            //gameActivity.showPlayerSpell(spell);
             if (true) { //if (spell == "FireBall") {
                 playerMP -= 4;
                 if (target == Target.BODY) {
