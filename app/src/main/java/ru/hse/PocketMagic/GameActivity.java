@@ -35,6 +35,37 @@ public class GameActivity extends AppCompatActivity {
     private GestureOverlayView gestureOverlayView;
     private GestureListener gestureListener;
 
+    public class Cast {
+
+        private String spell = null;
+        private float x = -1;
+        private float y = -1;
+
+        public void setSpell(String spell) {
+            this.spell = spell;
+
+            if (x != -1 && y != -1) {
+                sendCastInfo();
+            }
+        }
+
+        public void setPos(float x, float y) {
+            this.x = x;
+            this.y = y;
+
+            if (spell != null) {
+                sendCastInfo();
+            }
+        }
+
+        private void sendCastInfo() {
+            controller.playerSpell(spell, Target.BODY);
+            x = -1;
+            y = -1;
+            spell = null;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +91,9 @@ public class GameActivity extends AppCompatActivity {
 
         controller = new Controller(this);
 
-        gestureListener = new GestureListener(gestureLibrary, controller);
+        gestureListener = new GestureListener(gestureLibrary, this.new Cast());
         gestureOverlayView.addOnGesturePerformedListener(gestureListener);
+        gestureOverlayView.setOnTouchListener(gestureListener);
     }
 
     @Override
