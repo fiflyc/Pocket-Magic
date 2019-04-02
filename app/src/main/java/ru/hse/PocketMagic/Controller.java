@@ -11,7 +11,7 @@ public class Controller {
     private Logic logic;
     Bot bot;
     GameActivity gameActivity;
-    manaGeneration generation;
+    ManaGeneration generation;
 
     public Controller(GameActivity gameActivity) {
         this.gameActivity = gameActivity;
@@ -25,7 +25,7 @@ public class Controller {
         bot = new Bot();
         //bot.execute();
         bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        generation = new manaGeneration();
+        generation = new ManaGeneration();
         //generation.execute();
         generation.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -50,6 +50,18 @@ public class Controller {
     }
 
     public void opponentSpell(String spell) {
+        gameActivity.showOpponentSpell(spell);
+        HideOpponentSpell hide = new HideOpponentSpell();
+        hide.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
+    }
+
+    private void generateMana(int mana) {
+        logic.generateMana(mana);
+        gameActivity.setPlayerMP(logic.getPlayerMP());
+    }
+
+    private void throwOpponentSpell(String spell) {
+        gameActivity.hideOpponentSpell();
         logic.opponentSpell(spell);
         gameActivity.setPlayerHP(logic.getPlayerHP());
         if (logic.getPlayerHP() == 0) {
@@ -58,9 +70,23 @@ public class Controller {
         }
     }
 
-    private void generateMana(int mana) {
-        logic.generateMana(mana);
-        gameActivity.setPlayerMP(logic.getPlayerMP());
+    private class HideOpponentSpell extends AsyncTask<String, String, Void> {
+        @Override
+        protected Void doInBackground(String... spell) {
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publishProgress(spell);
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... spell) {
+            throwOpponentSpell(spell[0]);
+        }
     }
 
     private class Bot extends AsyncTask<Void, Void, Void> {
@@ -85,11 +111,11 @@ public class Controller {
 
         @Override
         protected void onProgressUpdate(Void... voids) {
-            opponentSpell("");
+            opponentSpell("FireBall");
         }
     }
 
-    private class manaGeneration extends AsyncTask<Void, Void, Void> {
+    private class ManaGeneration extends AsyncTask<Void, Void, Void> {
         private boolean isAlive = true;
 
         public void stop() {
@@ -101,7 +127,7 @@ public class Controller {
             while (isAlive) {
                 publishProgress();
                 try {
-                    TimeUnit.SECONDS.sleep(3);
+                    TimeUnit.SECONDS.sleep(5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -154,6 +180,7 @@ public class Controller {
         }
 
         synchronized public void opponentSpell(String spell) {
+            //gameActivity.showOpponentSpell(spell);
             if (true) {
                 playerHP -= 5;
             }
