@@ -39,7 +39,7 @@ public class Controller {
 
     public void playerSpell(String spell, Target target) {
         if (!logic.ableToThrowTheSpell(spell)) {
-            gameActivity.showOutOfMP();
+            gameActivity.sendNotification("Not enough mana");
             return;
         }
         logic.playerSpell(spell, target);
@@ -69,6 +69,7 @@ public class Controller {
         gameActivity.hideOpponentSpell();
         logic.opponentSpell(spell);
         gameActivity.setPlayerHP(logic.getPlayerHP());
+        gameActivity.sendNotification("You've got a damage!");
         if (logic.getPlayerHP() == 0) {
             endGame();
             gameActivity.endGame(GameResult.LOSE);

@@ -32,6 +32,8 @@ public class GameActivity extends AppCompatActivity {
     private ImageView opponentSpell;
     private ImageView opponentAvatar;
 
+    private TextView textNotifications;
+
     private GestureOverlayView gestureOverlayView;
 
     public class Caster {
@@ -44,7 +46,7 @@ public class GameActivity extends AppCompatActivity {
             this.spell = spell;
             gestureOverlayView.setVisibility(View.INVISIBLE);
             opponentAvatar.setEnabled(true);
-            showPlayerSpell("Set target");
+            sendNotification("Choose target");
 
             if (x != -1 && y != -1) {
                 sendCastInfo();
@@ -56,6 +58,9 @@ public class GameActivity extends AppCompatActivity {
             this.y = y;
             gestureOverlayView.setVisibility(View.VISIBLE);
             opponentAvatar.setEnabled(false);
+            if (textNotifications.getText().equals("Choose target")) {
+                sendNotification("");
+            }
 
             if (spell != null) {
                 sendCastInfo();
@@ -93,6 +98,8 @@ public class GameActivity extends AppCompatActivity {
         opponentName = findViewById(R.id.opponentName);
         opponentSpell = findViewById(R.id.opponentSpell);
         opponentAvatar = findViewById(R.id.opponentAvatar);
+
+        textNotifications = findViewById(R.id.textNotifications);
 
         controller = new Controller(this);
 
@@ -157,17 +164,14 @@ public class GameActivity extends AppCompatActivity {
     public void showOpponentSpell(String spell) {
         opponentSpell.setVisibility(View.VISIBLE);
         opponentSpell.setImageResource(R.drawable.fireball);
+        sendNotification("Opponent is casting FireBall!");
     }
 
     public void hideOpponentSpell() {
         opponentSpell.setVisibility(View.INVISIBLE);
     }
 
-    public void showPlayerSpell(String spell) {
-        Toast.makeText(this.getApplicationContext(), spell, Toast.LENGTH_LONG).show();
-    }
-
-    public void showOutOfMP() {
-        Toast.makeText(this.getApplicationContext(), "Not enough mana for the spell", Toast.LENGTH_LONG).show();
+    synchronized public void sendNotification(String notification) {
+       textNotifications.setText(notification);
     }
 }
