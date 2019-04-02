@@ -5,10 +5,13 @@ import android.util.Log;
 
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Math.min;
+
 public class Controller {
     private Logic logic;
     Bot bot;
     GameActivity gameActivity;
+    manaGeneration generation;
 
     public Controller(GameActivity gameActivity) {
         this.gameActivity = gameActivity;
@@ -20,7 +23,16 @@ public class Controller {
         gameActivity.setPlayerMP(logic.getPlayerMP());
         gameActivity.setOpponentHP(logic.getOpponentHP());
         bot = new Bot();
-        bot.execute();
+        //bot.execute();
+        bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        generation = new manaGeneration();
+        //generation.execute();
+        generation.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public void endGame() {
+        bot.stop();
+        generation.stop();
     }
 
     public void playerSpell(String spell) {
@@ -32,7 +44,7 @@ public class Controller {
         gameActivity.setPlayerMP(logic.getPlayerMP());
         gameActivity.setOpponentHP(logic.getOpponentHP());
         if (logic.getOpponentHP() == 0) {
-            bot.stop();
+            endGame();
             gameActivity.endGame(GameResult.WIN);
         }
     }
@@ -41,9 +53,14 @@ public class Controller {
         logic.opponentSpell(spell);
         gameActivity.setPlayerHP(logic.getPlayerHP());
         if (logic.getPlayerHP() == 0) {
-            bot.stop();
+            endGame();
             gameActivity.endGame(GameResult.LOSE);
         }
+    }
+
+    private void generateMana(int mana) {
+        logic.generateMana(mana);
+        gameActivity.setPlayerMP(logic.getPlayerMP());
     }
 
     private class Bot extends AsyncTask<Void, Void, Void> {
@@ -56,12 +73,12 @@ public class Controller {
         @Override
         protected Void doInBackground(Void... voids) {
             while (isAlive) {
-                publishProgress();
                 try {
-                    TimeUnit.SECONDS.sleep(5);
+                    TimeUnit.SECONDS.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                publishProgress();
             }
             return null;
         }
@@ -72,13 +89,39 @@ public class Controller {
         }
     }
 
+    private class manaGeneration extends AsyncTask<Void, Void, Void> {
+        private boolean isAlive = true;
+
+        public void stop() {
+            isAlive = false;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            while (isAlive) {
+                publishProgress();
+                try {
+                    TimeUnit.SECONDS.sleep(3);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... voids) {
+            generateMana(1);
+        }
+    }
+
     private class Logic {
         private static final int MAX_HP = 20;
         private static final int MAX_MP = 20;
 
-        private int playerHP = MAX_HP ;
-        private int opponentHP = MAX_HP;
-        private int playerMP = MAX_MP;
+        volatile private int playerHP = MAX_HP ;
+        volatile private int opponentHP = MAX_HP;
+        volatile private int playerMP = MAX_MP;
 
         public int getPlayerHP() {
             return playerHP;
@@ -120,6 +163,11 @@ public class Controller {
                 return false;
             }
             return true;
+        }
+
+        synchronized public void generateMana(int mana) {
+            playerMP += mana;
+            playerMP = min(playerMP, MAX_MP);
         }
     }
 }
