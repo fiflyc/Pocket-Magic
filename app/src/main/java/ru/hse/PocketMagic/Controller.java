@@ -8,12 +8,19 @@ import java.util.concurrent.TimeUnit;
 import static java.lang.Math.min;
 
 public class Controller {
+    /* inner logic of the game */
     private Logic logic;
-    Bot bot;
-    GameActivity gameActivity;
-    ManaGeneration generation;
-    boolean theEnd = false;
+    private Bot bot;
+    /* Parent GameActivity */
+    private GameActivity gameActivity;
+    /* Special AsyncTask for increasing playerMP every x seconds */
+    private ManaGeneration generation;
+    /* there are 3 cases when the game should be stopped
+    theEnd == true iff one of them happened
+    uses for communication between theese 3 cases () */
+    private boolean isStopped = false;
 
+    /**  */
     public Controller(GameActivity gameActivity) {
         this.gameActivity = gameActivity;
         logic = new Logic();
@@ -24,15 +31,13 @@ public class Controller {
         gameActivity.setPlayerMP(logic.getPlayerMP());
         gameActivity.setOpponentHP(logic.getOpponentHP());
         bot = new Bot();
-        //bot.execute();
         bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         generation = new ManaGeneration();
-        //generation.execute();
         generation.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void endGame() {
-        theEnd = true;
+        isStopped = true;
         bot.stop();
         generation.stop();
     }
@@ -63,7 +68,7 @@ public class Controller {
     }
 
     private void throwOpponentSpell(String spell) {
-        if (theEnd) {
+        if (isStopped) {
             return;
         }
         gameActivity.hideOpponentSpell();
@@ -203,5 +208,6 @@ public class Controller {
             playerMP += mana;
             playerMP = min(playerMP, MAX_MP);
         }
+
     }
 }
