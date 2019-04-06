@@ -1,8 +1,13 @@
 package ru.hse.PocketMagic;
 
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.min;
@@ -20,9 +25,51 @@ public class Controller {
     uses for communication between theese 3 cases () */
     private boolean isStopped = false;
 
+
+    //Переменная для работы с БД
+    private DatabaseHelper mDBHelper;
+    private SQLiteDatabase mDb;
+
     /**  */
     public Controller(GameActivity gameActivity) {
         this.gameActivity = gameActivity;
+///////////////////////////////////
+        mDBHelper = new DatabaseHelper(gameActivity);
+        try {
+            mDBHelper.updateDataBase();
+        } catch (IOException mIOException) {
+            throw new Error("UnableToUpdateDatabase");
+        }
+        try {
+            mDb = mDBHelper.getWritableDatabase();
+        } catch (SQLException mSQLException) {
+            throw mSQLException;
+        }
+
+        //Отправляем запрос в БД
+        Cursor cursor = mDb.rawQuery("SELECT * FROM spells", null);
+        cursor.moveToFirst();
+
+        HashMap<String, Object> client;
+
+        //Пробегаем по всем клиентам
+        while (!cursor.isAfterLast()) {
+            //client = new HashMap<String, Object>();
+
+            //Заполняем клиента
+            //client.put("name",  cursor.getString(1));
+            //client.put("age",  cursor.getString(2));
+
+            gameActivity.sendAlert(cursor.getString(1));
+
+            //Закидываем клиента в список клиентов
+            //clients.add(client);
+
+            //Переходим к следующему клиенту
+            cursor.moveToNext();
+        }
+        cursor.close();
+/////////////////////////////////////////
         logic = new Logic();
         gameActivity.setOpponentName("Kappa, the Twitch meme");
         gameActivity.setMaxHP(logic.getMaxHp());
