@@ -7,7 +7,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.min;
@@ -25,51 +27,9 @@ public class Controller {
     uses for communication between theese 3 cases () */
     private boolean isStopped = false;
 
-
-    //Переменная для работы с БД
-    private DatabaseHelper mDBHelper;
-    private SQLiteDatabase mDb;
-
     /**  */
     public Controller(GameActivity gameActivity) {
         this.gameActivity = gameActivity;
-///////////////////////////////////
-        mDBHelper = new DatabaseHelper(gameActivity);
-        try {
-            mDBHelper.updateDataBase();
-        } catch (IOException mIOException) {
-            throw new Error("UnableToUpdateDatabase");
-        }
-        try {
-            mDb = mDBHelper.getWritableDatabase();
-        } catch (SQLException mSQLException) {
-            throw mSQLException;
-        }
-
-        //Отправляем запрос в БД
-        Cursor cursor = mDb.rawQuery("SELECT * FROM spells", null);
-        cursor.moveToFirst();
-
-        HashMap<String, Object> client;
-
-        //Пробегаем по всем клиентам
-        while (!cursor.isAfterLast()) {
-            //client = new HashMap<String, Object>();
-
-            //Заполняем клиента
-            //client.put("name",  cursor.getString(1));
-            //client.put("age",  cursor.getString(2));
-
-            gameActivity.sendAlert(cursor.getString(1));
-
-            //Закидываем клиента в список клиентов
-            //clients.add(client);
-
-            //Переходим к следующему клиенту
-            cursor.moveToNext();
-        }
-        cursor.close();
-/////////////////////////////////////////
         logic = new Logic();
         gameActivity.setOpponentName("Kappa, the Twitch meme");
         gameActivity.setMaxHP(logic.getMaxHp());
@@ -147,6 +107,7 @@ public class Controller {
         }
     }
 
+
     private class Bot extends AsyncTask<Void, Void, Void> {
         private boolean isAlive = true;
 
@@ -207,6 +168,40 @@ public class Controller {
         volatile private int opponentHP = MAX_HP;
         volatile private int playerMP = MAX_MP;
 
+        private DatabaseHelper mDBHelper;
+        private SQLiteDatabase mDb;
+
+        public Logic() {
+            mDBHelper = new DatabaseHelper(gameActivity);
+            try {
+                mDBHelper.updateDataBase();
+            } catch (IOException mIOException) {
+                throw new Error("UnableToUpdateDatabase");
+            }
+            try {
+                mDb = mDBHelper.getWritableDatabase();
+            } catch (SQLException mSQLException) {
+                throw mSQLException;
+            }
+
+            //Отправляем запрос в БД
+            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='FireBall'", null);
+            cursor.moveToFirst();
+            //Пробегаем по всем клиентам
+            while (!cursor.isAfterLast()) {
+                //client = new HashMap<String, Object>();
+
+                //Заполняем клиента
+                //client.put("name",  cursor.getString(1));
+                //client.put("age",  cursor.getString(2));
+
+                gameActivity.sendAlert(cursor.getString( 0));
+                //Переходим к следующему клиенту
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
         public int getPlayerHP() {
             return playerHP;
         }
@@ -229,23 +224,21 @@ public class Controller {
 
         synchronized public void playerSpell(String spell, Target target) {
             //gameActivity.showPlayerSpell(spell);
-            if (true) { //if (spell == "FireBall") {
-                playerMP -= 4;
-                if (target == Target.BODY) {
-                    opponentHP -= 5;
-                }
+            //if (true) {//if (spell == "FireBall") {
+            playerMP -= getSpellCost(spell);
+            if (target == Target.BODY) {
+                opponentHP -= getSpellDamage(spell);
             }
+            //}
         }
 
         synchronized public void opponentSpell(String spell) {
             //gameActivity.showOpponentSpell(spell);
-            if (true) {
-                playerHP -= 5;
-            }
+            playerHP -= getSpellDamage(spell); //5;
         }
 
         public boolean ableToThrowTheSpell(String spell) {
-            if (playerMP < 5) {
+            if (playerMP < getSpellCost(spell) ) {
                 return false;
             }
             return true;
@@ -256,5 +249,39 @@ public class Controller {
             playerMP = min(playerMP, MAX_MP);
         }
 
+        public int getSpellCost(String spell) {
+            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='" + spell + "'", null);
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+
+        public int getSpellDamage(String spell) {
+            Cursor cursor = mDb.rawQuery("SELECT damage FROM spells WHERE name='" + spell + "'", null);
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+
+
+        public ArrayList<Spell> getAllSpells() {
+            ArrayList<Spell> result = new ArrayList<Spell>();
+            Cursor cursor = mDb.rawQuery("SELECT * FROM spells", null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                result.add( new Spell( cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getString(4)) );
+                cursor.moveToNext();
+            }
+            return result;
+        }
+
+        public ArrayList<String> getAllSpellNames() {
+            ArrayList<String> result = new ArrayList<String>();
+            Cursor cursor = mDb.rawQuery("SELECT name FROM spells", null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                result.add(cursor.getString(0));
+                cursor.moveToNext();
+            }
+            return result;
+        }
     }
 }
