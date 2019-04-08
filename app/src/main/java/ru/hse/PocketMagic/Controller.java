@@ -21,7 +21,7 @@ public class Controller {
     /* Parent GameActivity */
     private GameActivity gameActivity;
     /* Special AsyncTask for increasing playerMP every x seconds */
-    private ManaGeneration generation;
+    private ManaGenerator generation;
     /* there are 3 cases when the game should be stopped
     theEnd == true iff one of them happened
     uses for communication between theese 3 cases () */
@@ -39,7 +39,7 @@ public class Controller {
         gameActivity.setOpponentHP(logic.getOpponentHP());
         bot = new Bot();
         bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        generation = new ManaGeneration();
+        generation = new ManaGenerator();
         generation.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -134,7 +134,7 @@ public class Controller {
         }
     }
 
-    private class ManaGeneration extends AsyncTask<Void, Void, Void> {
+    private class ManaGenerator extends AsyncTask<Void, Void, Void> {
         private boolean isAlive = true;
 
         public void stop() {
@@ -183,7 +183,7 @@ public class Controller {
             } catch (SQLException mSQLException) {
                 throw mSQLException;
             }
-
+/*
             //Отправляем запрос в БД
             Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='FireBall'", null);
             cursor.moveToFirst();
@@ -200,6 +200,8 @@ public class Controller {
                 cursor.moveToNext();
             }
             cursor.close();
+
+*/
         }
 
         public int getPlayerHP() {
