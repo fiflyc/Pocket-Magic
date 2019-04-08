@@ -50,10 +50,12 @@ public class Controller {
     }
 
     public void playerSpell(String spell, Target target) {
-        if (!logic.ableToThrowTheSpell(spell)) {
+        if (!logic.ableToThrowTheSpell(spell, target)) {
             gameActivity.sendNotification("Not enough mana");
             return;
         }
+
+
         logic.playerSpell(spell, target);
         gameActivity.setPlayerMP(logic.getPlayerMP());
         gameActivity.setOpponentHP(logic.getOpponentHP());
@@ -88,22 +90,48 @@ public class Controller {
         }
     }
 
+    private void throwPlayerSpell(String spell) {
+        if (isStopped) {
+            return;
+        }
+        //gameActivity.hidePlayerSpell();
+    }
+
     private class HideOpponentSpell extends AsyncTask<String, String, Void> {
         @Override
-        protected Void doInBackground(String... spell) {
+        protected Void doInBackground(String... spells) {
             try {
                 TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            publishProgress(spell);
+            publishProgress(spells);
 
             return null;
         }
 
         @Override
-        protected void onProgressUpdate(String... spell) {
-            throwOpponentSpell(spell[0]);
+        protected void onProgressUpdate(String... spells) {
+            throwOpponentSpell(spells[0]);
+        }
+    }
+
+    private class ThrowPlayerSpell extends AsyncTask<String, String, Void> {
+
+        @Override
+        protected Void doInBackground(String... spells) {
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publishProgress(spells);
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... spells) {
+            throwPlayerSpell(spells[0]);
         }
     }
 
@@ -239,7 +267,7 @@ public class Controller {
             playerHP -= getSpellDamage(spell); //5;
         }
 
-        public boolean ableToThrowTheSpell(String spell) {
+        public boolean ableToThrowTheSpell(String spell, Target target) {
             if (playerMP < getSpellCost(spell) ) {
                 return false;
             }
