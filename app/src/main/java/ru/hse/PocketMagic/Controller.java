@@ -50,25 +50,21 @@ public class Controller {
     }
 
     public void playerSpell(String spell, Target target) {
-        if (!logic.ableToThrowTheSpell(spell, target)) {
+        String ability = logic.ableToThrowTheSpell(spell, target);
+        if (ability != "ok") {
             gameActivity.sendNotification("Not enough mana");
             return;
         }
-
-
-        logic.playerSpell(spell, target);
-        gameActivity.setPlayerMP(logic.getPlayerMP());
-        gameActivity.setOpponentHP(logic.getOpponentHP());
-        if (logic.getOpponentHP() == 0) {
-            endGame();
-            gameActivity.endGame(GameResult.WIN);
-        }
+        //gameActivity.showPlayerSpell(spell);
+        //throwPlayerSpell(spell);
+        ThrowPlayerSpell throwPlayerSpell = new ThrowPlayerSpell();
+        throwPlayerSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
 
     public void opponentSpell(String spell) {
         gameActivity.showOpponentSpell(spell);
-        HideOpponentSpell hide = new HideOpponentSpell();
-        hide.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
+        ThrowOpponentSpell throwOpponentSpell = new ThrowOpponentSpell();
+        throwOpponentSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
 
     private void generateMana(int mana) {
@@ -95,9 +91,16 @@ public class Controller {
             return;
         }
         //gameActivity.hidePlayerSpell();
+        logic.playerSpell(spell);
+        gameActivity.setPlayerMP(logic.getPlayerMP());
+        gameActivity.setOpponentHP(logic.getOpponentHP());
+        if (logic.getOpponentHP() == 0) {
+            endGame();
+            gameActivity.endGame(GameResult.WIN);
+        }
     }
 
-    private class HideOpponentSpell extends AsyncTask<String, String, Void> {
+    private class ThrowOpponentSpell extends AsyncTask<String, String, Void> {
         @Override
         protected Void doInBackground(String... spells) {
             try {
@@ -252,13 +255,13 @@ public class Controller {
             return MAX_MP;
         }
 
-        synchronized public void playerSpell(String spell, Target target) {
+        synchronized public void playerSpell(String spell) {
             //gameActivity.showPlayerSpell(spell);
             //if (true) {//if (spell == "FireBall") {
             playerMP -= getSpellCost(spell);
-            if (target == Target.BODY) {
+            //if (target == Target.BODY) {
                 opponentHP -= getSpellDamage(spell);
-            }
+            //}
             //}
         }
 
@@ -267,11 +270,16 @@ public class Controller {
             playerHP -= getSpellDamage(spell); //5;
         }
 
-        public boolean ableToThrowTheSpell(String spell, Target target) {
+        public String ableToThrowTheSpell(String spell, Target target) {
             if (playerMP < getSpellCost(spell) ) {
-                return false;
+                //return false;
+                return  ("Not enough mana for the spell " + spell);
             }
-            return true;
+            if (target == Target.NOWHERE) {
+                playerMP -= getSpellCost(spell);
+                return "Miss!";
+            }
+            return "ok";
         }
 
         synchronized public void generateMana(int mana) {
