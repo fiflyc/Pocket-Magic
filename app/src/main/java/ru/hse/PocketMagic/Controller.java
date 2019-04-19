@@ -1,19 +1,33 @@
 package ru.hse.PocketMagic;
 
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.min;
 
 public class Controller {
+    /* inner logic of the game */
     private Logic logic;
-    Bot bot;
-    GameActivity gameActivity;
-    ManaGeneration generation;
-    boolean theEnd = false;
+    private Bot bot;
+    /* Parent GameActivity */
+    private GameActivity gameActivity;
+    /* Special AsyncTask for increasing playerMP every x seconds */
+    private ManaGenerator generation;
+    /* there are 3 cases when the game should be stopped
+    theEnd == true iff one of them happened
+    uses for communication between theese 3 cases () */
+    private boolean isStopped = false;
 
+    /**  */
     public Controller(GameActivity gameActivity) {
         this.gameActivity = gameActivity;
         logic = new Logic();
@@ -24,37 +38,33 @@ public class Controller {
         gameActivity.setPlayerMP(logic.getPlayerMP());
         gameActivity.setOpponentHP(logic.getOpponentHP());
         bot = new Bot();
-        //bot.execute();
         bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        generation = new ManaGeneration();
-        //generation.execute();
+        generation = new ManaGenerator();
         generation.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void endGame() {
-        theEnd = true;
+        isStopped = true;
         bot.stop();
         generation.stop();
     }
 
     public void playerSpell(String spell, Target target) {
-        if (!logic.ableToThrowTheSpell(spell)) {
+        String ability = logic.ableToThrowTheSpell(spell, target);
+        if (ability != "ok") {
             gameActivity.sendNotification("Not enough mana");
             return;
         }
-        logic.playerSpell(spell, target);
-        gameActivity.setPlayerMP(logic.getPlayerMP());
-        gameActivity.setOpponentHP(logic.getOpponentHP());
-        if (logic.getOpponentHP() == 0) {
-            endGame();
-            gameActivity.endGame(GameResult.WIN);
-        }
+        //gameActivity.showPlayerSpell(spell);
+        //throwPlayerSpell(spell);
+        ThrowPlayerSpell throwPlayerSpell = new ThrowPlayerSpell();
+        throwPlayerSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
 
     public void opponentSpell(String spell) {
         gameActivity.showOpponentSpell(spell);
-        HideOpponentSpell hide = new HideOpponentSpell();
-        hide.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
+        ThrowOpponentSpell throwOpponentSpell = new ThrowOpponentSpell();
+        throwOpponentSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
 
     private void generateMana(int mana) {
@@ -63,7 +73,7 @@ public class Controller {
     }
 
     private void throwOpponentSpell(String spell) {
-        if (theEnd) {
+        if (isStopped) {
             return;
         }
         gameActivity.hideOpponentSpell();
@@ -76,24 +86,58 @@ public class Controller {
         }
     }
 
-    private class HideOpponentSpell extends AsyncTask<String, String, Void> {
+    private void throwPlayerSpell(String spell) {
+        if (isStopped) {
+            return;
+        }
+        //gameActivity.hidePlayerSpell();
+        logic.playerSpell(spell);
+        gameActivity.setPlayerMP(logic.getPlayerMP());
+        gameActivity.setOpponentHP(logic.getOpponentHP());
+        if (logic.getOpponentHP() == 0) {
+            endGame();
+            gameActivity.endGame(GameResult.WIN);
+        }
+    }
+
+    private class ThrowOpponentSpell extends AsyncTask<String, String, Void> {
         @Override
-        protected Void doInBackground(String... spell) {
+        protected Void doInBackground(String... spells) {
             try {
                 TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            publishProgress(spell);
+            publishProgress(spells);
 
             return null;
         }
 
         @Override
-        protected void onProgressUpdate(String... spell) {
-            throwOpponentSpell(spell[0]);
+        protected void onProgressUpdate(String... spells) {
+            throwOpponentSpell(spells[0]);
         }
     }
+
+    private class ThrowPlayerSpell extends AsyncTask<String, String, Void> {
+
+        @Override
+        protected Void doInBackground(String... spells) {
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publishProgress(spells);
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... spells) {
+            throwPlayerSpell(spells[0]);
+        }
+    }
+
 
     private class Bot extends AsyncTask<Void, Void, Void> {
         private boolean isAlive = true;
@@ -121,7 +165,7 @@ public class Controller {
         }
     }
 
-    private class ManaGeneration extends AsyncTask<Void, Void, Void> {
+    private class ManaGenerator extends AsyncTask<Void, Void, Void> {
         private boolean isAlive = true;
 
         public void stop() {
@@ -155,6 +199,42 @@ public class Controller {
         volatile private int opponentHP = MAX_HP;
         volatile private int playerMP = MAX_MP;
 
+        private DatabaseHelper mDBHelper;
+        private SQLiteDatabase mDb;
+
+        public Logic() {
+            mDBHelper = new DatabaseHelper(gameActivity);
+            try {
+                mDBHelper.updateDataBase();
+            } catch (IOException mIOException) {
+                throw new Error("UnableToUpdateDatabase");
+            }
+            try {
+                mDb = mDBHelper.getWritableDatabase();
+            } catch (SQLException mSQLException) {
+                throw mSQLException;
+            }
+/*
+            //Отправляем запрос в БД
+            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='FireBall'", null);
+            cursor.moveToFirst();
+            //Пробегаем по всем клиентам
+            while (!cursor.isAfterLast()) {
+                //client = new HashMap<String, Object>();
+
+                //Заполняем клиента
+                //client.put("name",  cursor.getString(1));
+                //client.put("age",  cursor.getString(2));
+
+                gameActivity.sendAlert(cursor.getString( 0));
+                //Переходим к следующему клиенту
+                cursor.moveToNext();
+            }
+            cursor.close();
+
+*/
+        }
+
         public int getPlayerHP() {
             return playerHP;
         }
@@ -175,33 +255,71 @@ public class Controller {
             return MAX_MP;
         }
 
-        synchronized public void playerSpell(String spell, Target target) {
+        synchronized public void playerSpell(String spell) {
             //gameActivity.showPlayerSpell(spell);
-            if (true) { //if (spell == "FireBall") {
-                playerMP -= 4;
-                if (target == Target.BODY) {
-                    opponentHP -= 5;
-                }
-            }
+            //if (true) {//if (spell == "FireBall") {
+            playerMP -= getSpellCost(spell);
+            //if (target == Target.BODY) {
+                opponentHP -= getSpellDamage(spell);
+            //}
+            //}
         }
 
         synchronized public void opponentSpell(String spell) {
             //gameActivity.showOpponentSpell(spell);
-            if (true) {
-                playerHP -= 5;
-            }
+            playerHP -= getSpellDamage(spell); //5;
         }
 
-        public boolean ableToThrowTheSpell(String spell) {
-            if (playerMP < 5) {
-                return false;
+        public String ableToThrowTheSpell(String spell, Target target) {
+            if (playerMP < getSpellCost(spell) ) {
+                //return false;
+                return  ("Not enough mana for the spell " + spell);
             }
-            return true;
+            if (target == Target.NOWHERE) {
+                playerMP -= getSpellCost(spell);
+                return "Miss!";
+            }
+            return "ok";
         }
 
         synchronized public void generateMana(int mana) {
             playerMP += mana;
             playerMP = min(playerMP, MAX_MP);
+        }
+
+        public int getSpellCost(String spell) {
+            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='" + spell + "'", null);
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+
+        public int getSpellDamage(String spell) {
+            Cursor cursor = mDb.rawQuery("SELECT damage FROM spells WHERE name='" + spell + "'", null);
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+
+
+        public ArrayList<Spell> getAllSpells() {
+            ArrayList<Spell> result = new ArrayList<Spell>();
+            Cursor cursor = mDb.rawQuery("SELECT * FROM spells", null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                result.add( new Spell( cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getString(4)) );
+                cursor.moveToNext();
+            }
+            return result;
+        }
+
+        public ArrayList<String> getAllSpellNames() {
+            ArrayList<String> result = new ArrayList<String>();
+            Cursor cursor = mDb.rawQuery("SELECT name FROM spells", null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                result.add(cursor.getString(0));
+                cursor.moveToNext();
+            }
+            return result;
         }
     }
 }
