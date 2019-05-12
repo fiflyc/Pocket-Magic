@@ -204,7 +204,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/gestureListener"
         app:layout_constraintTop_toTopOf="@+id/gestureListener"
-        app:srcCompat="@drawable/effect_fog" />
+        app:srcCompat="@drawable/weather_fog" />
 
     <android.gesture.GestureOverlayView
         android:id="@+id/gestureListener"
