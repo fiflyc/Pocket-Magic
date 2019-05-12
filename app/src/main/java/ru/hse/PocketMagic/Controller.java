@@ -18,8 +18,8 @@ public class Controller {
     /* inner logic of the game */
     private Logic logic;
     private Bot bot;
-    /* Parent GameActivity */
-    private GameActivity gameActivity;
+    /* Parent painter */
+    private Painter painter;
     /* Special AsyncTask for increasing playerMP every x seconds */
     private ManaGenerator generation;
     /* there are 3 cases when the game should be stopped
@@ -28,15 +28,15 @@ public class Controller {
     private boolean isStopped = false;
 
     /**  */
-    public Controller(GameActivity gameActivity) {
-        this.gameActivity = gameActivity;
+    public Controller(Painter painter) {
+        this.painter = painter;
         logic = new Logic();
-        gameActivity.setOpponentName("Kappa, the Twitch meme");
-        gameActivity.setMaxHP(logic.getMaxHp());
-        gameActivity.setMaxMP(logic.getMaxMp());
-        gameActivity.setPlayerHP(logic.getPlayerHP());
-        gameActivity.setPlayerMP(logic.getPlayerMP());
-        gameActivity.setOpponentHP(logic.getOpponentHP());
+        painter.setOpponentName("Kappa, the Twitch meme");
+        painter.setMaxHP(logic.getMaxHp());
+        painter.setMaxMP(logic.getMaxMp());
+        painter.setPlayerHP(logic.getPlayerHP());
+        painter.setPlayerMP(logic.getPlayerMP());
+        painter.setOpponentHP(logic.getOpponentHP());
         bot = new Bot();
         bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         generation = new ManaGenerator();
@@ -52,37 +52,37 @@ public class Controller {
     public void playerSpell(String spell, Target target) {
         String ability = logic.ableToThrowTheSpell(spell, target);
         if (ability != "ok") {
-            gameActivity.sendNotification("Not enough mana");
+            painter.sendNotification("Not enough mana");
             return;
         }
-        //gameActivity.showPlayerSpell(spell);
+        //painter.showPlayerSpell(spell);
         //throwPlayerSpell(spell);
         ThrowPlayerSpell throwPlayerSpell = new ThrowPlayerSpell();
         throwPlayerSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
 
     public void opponentSpell(String spell) {
-        gameActivity.showOpponentSpell(spell);
+        painter.showOpponentSpell(spell);
         ThrowOpponentSpell throwOpponentSpell = new ThrowOpponentSpell();
         throwOpponentSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
 
     private void generateMana(int mana) {
         logic.generateMana(mana);
-        gameActivity.setPlayerMP(logic.getPlayerMP());
+        painter.setPlayerMP(logic.getPlayerMP());
     }
 
     private void throwOpponentSpell(String spell) {
         if (isStopped) {
             return;
         }
-        gameActivity.hideOpponentSpell();
+        painter.hideOpponentSpell();
         logic.opponentSpell(spell);
-        gameActivity.setPlayerHP(logic.getPlayerHP());
-        gameActivity.sendNotification("You've got a damage!");
+        painter.setPlayerHP(logic.getPlayerHP());
+        painter.sendNotification("You've got a damage!");
         if (logic.getPlayerHP() == 0) {
             endGame();
-            gameActivity.endGame(GameResult.LOSE);
+            painter.endGame(GameResult.LOSE);
         }
     }
 
@@ -90,13 +90,13 @@ public class Controller {
         if (isStopped) {
             return;
         }
-        //gameActivity.hidePlayerSpell();
+        //painter.hidePlayerSpell();
         logic.playerSpell(spell);
-        gameActivity.setPlayerMP(logic.getPlayerMP());
-        gameActivity.setOpponentHP(logic.getOpponentHP());
+        painter.setPlayerMP(logic.getPlayerMP());
+        painter.setOpponentHP(logic.getOpponentHP());
         if (logic.getOpponentHP() == 0) {
             endGame();
-            gameActivity.endGame(GameResult.WIN);
+            painter.endGame(GameResult.WIN);
         }
     }
 
@@ -203,7 +203,7 @@ public class Controller {
         private SQLiteDatabase mDb;
 
         public Logic() {
-            mDBHelper = new DatabaseHelper(gameActivity);
+            mDBHelper = new DatabaseHelper(painter.getContext());
             try {
                 mDBHelper.updateDataBase();
             } catch (IOException mIOException) {
@@ -226,7 +226,7 @@ public class Controller {
                 //client.put("name",  cursor.getString(1));
                 //client.put("age",  cursor.getString(2));
 
-                gameActivity.sendAlert(cursor.getString( 0));
+                painter.sendAlert(cursor.getString( 0));
                 //Переходим к следующему клиенту
                 cursor.moveToNext();
             }
@@ -256,7 +256,7 @@ public class Controller {
         }
 
         synchronized public void playerSpell(String spell) {
-            //gameActivity.showPlayerSpell(spell);
+            //painter.showPlayerSpell(spell);
             //if (true) {//if (spell == "FireBall") {
             playerMP -= getSpellCost(spell);
             //if (target == Target.BODY) {
@@ -266,7 +266,7 @@ public class Controller {
         }
 
         synchronized public void opponentSpell(String spell) {
-            //gameActivity.showOpponentSpell(spell);
+            //painter.showOpponentSpell(spell);
             playerHP -= getSpellDamage(spell); //5;
         }
 
