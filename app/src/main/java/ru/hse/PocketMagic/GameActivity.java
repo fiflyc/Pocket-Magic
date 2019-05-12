@@ -100,7 +100,7 @@ public class GameActivity extends AppCompatActivity {
             finish();
         }
 
-        public void showOpponentSpell(String spell) {
+        public void showOpponentCast(String spell) {
             if (spell.equals("Heal")) {
                 opponentSpell.setImageResource(R.drawable.heal);
                 opponentSpell.setVisibility(View.VISIBLE);
@@ -113,12 +113,24 @@ public class GameActivity extends AppCompatActivity {
             } else if (spell.equals("Fog")) {
                 opponentSpell.setImageResource(R.drawable.fog);
                 opponentSpell.setVisibility(View.VISIBLE);
+            } else if (spell.equals("Breeze")) {
+                opponentSpell.setImageResource(R.drawable.breeze);
+                opponentSpell.setVisibility(View.VISIBLE);
+            } else if (spell.equals("Fire Ball")) {
+                opponentSpell.setImageResource(R.drawable.fireball);
+                opponentSpell.setVisibility(View.VISIBLE);
+            } else if (spell.equals("Lightning")) {
+                opponentSpell.setImageResource(R.drawable.lightning);
+                opponentSpell.setVisibility(View.VISIBLE);
+            } else if (spell.equals("Exhausting Sun")) {
+                opponentSpell.setImageResource(R.drawable.exhausting_sun);
+                opponentSpell.setVisibility(View.VISIBLE);
             }
 
             sendNotification("Opponent is casting " + spell);
         }
 
-        public void hideOpponentSpell() {
+        public void hideOpponentCast() {
             opponentSpell.setVisibility(View.INVISIBLE);
         }
 
@@ -174,9 +186,7 @@ public class GameActivity extends AppCompatActivity {
 
         @Override
         public void setPlayerEffect(String effect) {
-            if (effect.equals("Fog")) {
-                fog.setVisibility(View.VISIBLE);
-            } else if (effect.equals("Cold")) {
+            if (effect.equals("Cold")) {
                 playerEffect.setImageResource(R.drawable.effect_cold_player);
                 playerEffect.setVisibility(View.VISIBLE);
             } else if (effect.equals("Frozen")) {
@@ -190,11 +200,7 @@ public class GameActivity extends AppCompatActivity {
 
         @Override
         public void hidePlayerEffect(String effect) {
-            if (effect.equals("Fog")) {
-                fog.setVisibility(View.INVISIBLE);
-            } else {
-                playerEffect.setVisibility(View.INVISIBLE);
-            }
+            playerEffect.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -205,6 +211,54 @@ public class GameActivity extends AppCompatActivity {
         @Override
         public void hideOpponentEffect(String effect) {
             /* TODO */
+        }
+
+        @Override
+        public void setWeather(String weather) {
+            if (weather.equals("Fog")) {
+                fog.setVisibility(View.VISIBLE);
+            } else if (weather.equals("Breeze Front")) {
+                /* TODO */
+            } else if (weather.equals("Breeze Back")) {
+                /* TODO */
+            } else if (weather.equals("Ices")) {
+                /* TODO */
+            } else if (weather.equals("Exhausting Sun")) {
+                /* TODO */
+            }
+        }
+
+        @Override
+        public void hideWeather(String weather) {
+            if (weather.equals("Fog")) {
+                fog.setVisibility(View.INVISIBLE);
+            } else if (weather.equals("Breeze Front")) {
+                /* TODO */
+            } else if (weather.equals("Breeze Back")) {
+                /* TODO */
+            } else if (weather.equals("Ices")) {
+                /* TODO */
+            } else if (weather.equals("Exhausting Sun")) {
+                /* TODO */
+            }
+        }
+
+        @Override
+        public void showPlayerSpell(String spell) {
+            if (spell.equals("Fireball")) {
+                /* TODO */
+            } else if (spell.equals("Lightning")) {
+                /* TODO */
+            }
+        }
+
+        @Override
+        public void showOpponentSpell(String spell) {
+            if (spell.equals("Fireball")) {
+                /* TODO */
+            } else if (spell.equals("Lightning")) {
+                /* TODO */
+            }
         }
 
         synchronized public void sendNotification(String notification) {

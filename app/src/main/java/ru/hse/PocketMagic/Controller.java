@@ -4,12 +4,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.min;
@@ -62,7 +59,7 @@ public class Controller {
     }
 
     public void opponentSpell(String spell) {
-        painter.showOpponentSpell(spell);
+        painter.showOpponentCast(spell);
         ThrowOpponentSpell throwOpponentSpell = new ThrowOpponentSpell();
         throwOpponentSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
@@ -76,7 +73,7 @@ public class Controller {
         if (isStopped) {
             return;
         }
-        painter.hideOpponentSpell();
+        painter.hideOpponentCast();
         logic.opponentSpell(spell);
         painter.setPlayerHP(logic.getPlayerHP());
         painter.sendNotification("You've got a damage!");
@@ -266,7 +263,7 @@ public class Controller {
         }
 
         synchronized public void opponentSpell(String spell) {
-            //painter.showOpponentSpell(spell);
+            //painter.showOpponentCast(spell);
             playerHP -= getSpellDamage(spell); //5;
         }
 
