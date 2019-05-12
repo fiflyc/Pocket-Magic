@@ -25,19 +25,24 @@ public class GameActivity extends AppCompatActivity {
     private TextView valueHP;
     private ProgressBar playerMP;
     private TextView valueMP;
-    private ProgressBar opponentHP;
-    private TextView valueOHP;
 
     private TextView opponentName;
-    private ImageView opponentSpell;
+    private ProgressBar opponentHP;
+    private TextView valueOHP;
     private ImageView opponentAvatar;
+    private ImageView opponentSpell;
+
+    private ImageView playerBuffA;
+    private ImageView playerBuffB;
+    private ImageView opponentBuffA;
+    private ImageView opponentBuffB;
 
     private GestureOverlayView gestureOverlayView;
 
     public class Caster {
 
         public void cast(String spell) {
-
+            controller.playerSpell(spell, Target.BODY);
         }
     }
 
@@ -93,13 +98,69 @@ public class GameActivity extends AppCompatActivity {
         }
 
         public void showOpponentSpell(String spell) {
-            opponentSpell.setVisibility(View.VISIBLE);
-            opponentSpell.setImageResource(R.drawable.fireball);
-            sendNotification("Opponent is casting FireBall!");
+            if (spell.equals("Heal")) {
+                opponentSpell.setImageResource(R.drawable.heal);
+                opponentSpell.setVisibility(View.VISIBLE);
+            } else if (spell.equals("Sun Shield")) {
+                opponentSpell.setImageResource(R.drawable.sunshield);
+                opponentSpell.setVisibility(View.VISIBLE);
+            }
+
+            sendNotification("Opponent is casting " + spell);
         }
 
         public void hideOpponentSpell() {
             opponentSpell.setVisibility(View.INVISIBLE);
+        }
+
+        @Override
+        public void showOpponentBuff(String buff) {
+            if (buff.equals("Heal")) {
+                opponentBuffB.setImageResource(R.drawable.buff_heal);
+                opponentBuffB.setVisibility(View.VISIBLE);
+            } else if (buff.equals("SunShieldA")) {
+                opponentBuffA.setImageResource(R.drawable.buff_sunshield_a);
+                opponentBuffA.setVisibility(View.VISIBLE);
+            } else if (buff.equals("SunShieldB")) {
+                opponentBuffA.setImageResource(R.drawable.buff_sunshield_b);
+                opponentBuffA.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void hideOpponentBuff(String buff) {
+            if (buff.equals("Heal")) {
+                opponentBuffB.setVisibility(View.INVISIBLE);
+            } else if (buff.equals("SunShieldA")) {
+                opponentBuffA.setVisibility(View.INVISIBLE);
+            } else if (buff.equals("SunShieldB")) {
+                opponentBuffA.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        @Override
+        public void setPlayerBuff(String buff) {
+            if (buff.equals("Heal")) {
+                playerBuffB.setImageResource(R.drawable.buff_heal);
+                playerBuffB.setVisibility(View.VISIBLE);
+            } else if (buff.equals("SunShieldA")) {
+                playerBuffA.setImageResource(R.drawable.buff_sunshield_a);
+                playerBuffA.setVisibility(View.VISIBLE);
+            } else if (buff.equals("SunShieldB")) {
+                playerBuffA.setImageResource(R.drawable.buff_sunshield_b);
+                playerBuffA.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void hidePlayerBuff(String buff) {
+            if (buff.equals("Heal")) {
+                opponentBuffB.setVisibility(View.INVISIBLE);
+            } else if (buff.equals("SunShieldA")) {
+                opponentBuffA.setVisibility(View.INVISIBLE);
+            } else if (buff.equals("SunShieldB")) {
+                opponentBuffA.setVisibility(View.INVISIBLE);
+            }
         }
 
         synchronized public void sendNotification(String notification) {
@@ -134,6 +195,11 @@ public class GameActivity extends AppCompatActivity {
         opponentName = findViewById(R.id.opponentName);
         opponentSpell = findViewById(R.id.opponentSpell);
         opponentAvatar = findViewById(R.id.opponentAvatar);
+
+        playerBuffA = findViewById(R.id.playerBuffA);
+        playerBuffB = findViewById(R.id.playerBuffB);
+        opponentBuffA = findViewById(R.id.opponentBuffA);
+        opponentBuffB = findViewById(R.id.opponentBuffB);
 
         controller = new Controller(this.new Painter());
 

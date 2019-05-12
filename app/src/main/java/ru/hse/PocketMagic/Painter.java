@@ -22,6 +22,14 @@ public interface Painter {
 
     void hideOpponentSpell();
 
+    void showOpponentBuff(String buff);
+
+    void hideOpponentBuff(String buff);
+
+    void setPlayerBuff(String buff);
+
+    void hidePlayerBuff(String buff);
+
     void sendNotification(String notification);
 
     Context getContext();
