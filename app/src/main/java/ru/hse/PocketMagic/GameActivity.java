@@ -37,6 +37,9 @@ public class GameActivity extends AppCompatActivity {
     private ImageView opponentBuffA;
     private ImageView opponentBuffB;
 
+    private ImageView fog;
+    private ImageView playerEffect;
+
     private GestureOverlayView gestureOverlayView;
 
     public class Caster {
@@ -104,6 +107,12 @@ public class GameActivity extends AppCompatActivity {
             } else if (spell.equals("Sun Shield")) {
                 opponentSpell.setImageResource(R.drawable.sunshield);
                 opponentSpell.setVisibility(View.VISIBLE);
+            } else if (spell.equals("Freeze")) {
+                opponentSpell.setImageResource(R.drawable.freeze);
+                opponentSpell.setVisibility(View.VISIBLE);
+            } else if (spell.equals("Fog")) {
+                opponentSpell.setImageResource(R.drawable.fog);
+                opponentSpell.setVisibility(View.VISIBLE);
             }
 
             sendNotification("Opponent is casting " + spell);
@@ -163,6 +172,41 @@ public class GameActivity extends AppCompatActivity {
             }
         }
 
+        @Override
+        public void setPlayerEffect(String effect) {
+            if (effect.equals("Fog")) {
+                fog.setVisibility(View.VISIBLE);
+            } else if (effect.equals("Cold")) {
+                playerEffect.setImageResource(R.drawable.effect_cold_player);
+                playerEffect.setVisibility(View.VISIBLE);
+            } else if (effect.equals("Frozen")) {
+                playerEffect.setImageResource(R.drawable.effect_frozen_player);
+                playerEffect.setVisibility(View.VISIBLE);
+            } else if (effect.equals("Wet")) {
+                playerEffect.setImageResource(R.drawable.effect_wet_player);
+                playerEffect.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void hidePlayerEffect(String effect) {
+            if (effect.equals("Fog")) {
+                fog.setVisibility(View.INVISIBLE);
+            } else {
+                playerEffect.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        @Override
+        public void setOpponentEffect(String effect) {
+            /* TODO */
+        }
+
+        @Override
+        public void hideOpponentEffect(String effect) {
+            /* TODO */
+        }
+
         synchronized public void sendNotification(String notification) {
             /* TODO */
         }
@@ -200,6 +244,9 @@ public class GameActivity extends AppCompatActivity {
         playerBuffB = findViewById(R.id.playerBuffB);
         opponentBuffA = findViewById(R.id.opponentBuffA);
         opponentBuffB = findViewById(R.id.opponentBuffB);
+
+        fog = findViewById(R.id.fog);
+        playerEffect = findViewById(R.id.playerEffect);
 
         controller = new Controller(this.new Painter());
 

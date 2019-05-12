@@ -30,6 +30,14 @@ public interface Painter {
 
     void hidePlayerBuff(String buff);
 
+    void setPlayerEffect(String effect);
+
+    void hidePlayerEffect(String effect);
+
+    void setOpponentEffect(String effect);
+
+    void hideOpponentEffect(String effect);
+
     void sendNotification(String notification);
 
     Context getContext();
