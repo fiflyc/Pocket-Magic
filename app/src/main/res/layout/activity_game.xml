@@ -183,6 +183,26 @@
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@mipmap/ic_launcher_background" />
 
+    <com.cunoraz.gifview.library.GifView
+        android:id="@+id/breeze"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/gestureListener"
+        app:layout_constraintEnd_toEndOf="@+id/gestureListener"
+        app:layout_constraintStart_toStartOf="@+id/fog"
+        app:layout_constraintTop_toTopOf="@+id/gestureListener" />
+
+    <com.cunoraz.gifview.library.GifView
+        android:id="@+id/ices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/gestureListener"
+        app:layout_constraintEnd_toEndOf="@+id/gestureListener"
+        app:layout_constraintStart_toStartOf="@+id/fog"
+        app:layout_constraintTop_toTopOf="@+id/gestureListener" />
+
     <ImageView
         android:id="@+id/opponentAvatar"
         android:layout_width="match_parent"
@@ -218,8 +238,6 @@
         app:layout_constraintBottom_toTopOf="@+id/playerMP"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/opponentHP">
-
-    </android.gesture.GestureOverlayView>
+        app:layout_constraintTop_toBottomOf="@+id/opponentHP" />
 
 </android.support.constraint.ConstraintLayout>

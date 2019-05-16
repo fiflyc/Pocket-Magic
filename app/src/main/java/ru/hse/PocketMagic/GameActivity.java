@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.cunoraz.gifview.library.GifView;
+
 public class GameActivity extends AppCompatActivity {
 
     private Controller controller;
@@ -38,6 +40,8 @@ public class GameActivity extends AppCompatActivity {
     private ImageView opponentBuffB;
 
     private ImageView fog;
+    private GifView breeze;
+    private GifView ices;
     private ImageView playerEffect;
 
     private GestureOverlayView gestureOverlayView;
@@ -218,11 +222,17 @@ public class GameActivity extends AppCompatActivity {
             if (weather.equals("Fog")) {
                 fog.setVisibility(View.VISIBLE);
             } else if (weather.equals("Breeze Front")) {
-                /* TODO */
+                breeze.setGifResource(R.anim.breeze_front);
+                breeze.setVisibility(View.VISIBLE);
+                breeze.play();
             } else if (weather.equals("Breeze Back")) {
-                /* TODO */
+                breeze.setGifResource(R.anim.breeze_back);
+                breeze.setVisibility(View.VISIBLE);
+                breeze.play();
             } else if (weather.equals("Ices")) {
-                /* TODO */
+                ices.setGifResource(R.anim.ices);
+                ices.pause();
+                ices.setVisibility(View.VISIBLE);
             } else if (weather.equals("Exhausting Sun")) {
                 /* TODO */
             }
@@ -233,11 +243,13 @@ public class GameActivity extends AppCompatActivity {
             if (weather.equals("Fog")) {
                 fog.setVisibility(View.INVISIBLE);
             } else if (weather.equals("Breeze Front")) {
-                /* TODO */
+                breeze.pause();
+                breeze.setVisibility(View.INVISIBLE);
             } else if (weather.equals("Breeze Back")) {
-                /* TODO */
+                breeze.pause();
+                breeze.setVisibility(View.INVISIBLE);
             } else if (weather.equals("Ices")) {
-                /* TODO */
+                ices.play();
             } else if (weather.equals("Exhausting Sun")) {
                 /* TODO */
             }
@@ -300,6 +312,8 @@ public class GameActivity extends AppCompatActivity {
         opponentBuffB = findViewById(R.id.opponentBuffB);
 
         fog = findViewById(R.id.fog);
+        breeze = findViewById(R.id.breeze);
+        ices = findViewById(R.id.ices);
         playerEffect = findViewById(R.id.playerEffect);
 
         controller = new Controller(this.new Painter());
