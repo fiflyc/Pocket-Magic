@@ -42,7 +42,9 @@ public interface Painter {
 
     void setWeatherBack(String weather);
 
-    void hideWeather(String weather);
+    void hideWeatherFront(String weather);
+
+    void hideWeatherBack(String weather);
 
     void showPlayerSpell(String spell);
 

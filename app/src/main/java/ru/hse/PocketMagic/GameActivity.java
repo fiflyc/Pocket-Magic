@@ -44,6 +44,11 @@ public class GameActivity extends AppCompatActivity {
     private GifView ices;
     private ImageView playerEffect;
 
+    private GifView playerCast;
+    private GifView playerSun;
+    private GifView opponentCast;
+    private GifView opponentSun;
+
     private GestureOverlayView gestureOverlayView;
 
     public class Caster {
@@ -230,7 +235,9 @@ public class GameActivity extends AppCompatActivity {
                 ices.pause();
                 ices.setVisibility(View.VISIBLE);
             } else if (weather.equals("Exhausting Sun")) {
-                /* TODO */
+                opponentSun.setGifResource(R.anim.exhausting_sun_front);
+                opponentSun.setVisibility(View.VISIBLE);
+                opponentSun.play();
             }
         }
 
@@ -247,12 +254,14 @@ public class GameActivity extends AppCompatActivity {
                 ices.pause();
                 ices.setVisibility(View.VISIBLE);
             } else if (weather.equals("Exhausting Sun")) {
-                /* TODO */
+                playerSun.setGifResource(R.anim.exhausting_sun_back);
+                playerSun.setVisibility(View.VISIBLE);
+                playerSun.play();
             }
         }
 
         @Override
-        public void hideWeather(String weather) {
+        public void hideWeatherFront(String weather) {
             if (weather.equals("Fog")) {
                 fog.setVisibility(View.INVISIBLE);
             } else if (weather.equals("Breeze")) {
@@ -261,25 +270,49 @@ public class GameActivity extends AppCompatActivity {
             } else if (weather.equals("Ices")) {
                 ices.play();
             } else if (weather.equals("Exhausting Sun")) {
-                /* TODO */
+                opponentSun.setVisibility(View.INVISIBLE);
+                opponentSun.pause();
+            }
+        }
+
+        @Override
+        public void hideWeatherBack(String weather) {
+            if (weather.equals("Fog")) {
+                fog.setVisibility(View.INVISIBLE);
+            } else if (weather.equals("Breeze")) {
+                breeze.pause();
+                breeze.setVisibility(View.INVISIBLE);
+            } else if (weather.equals("Ices")) {
+                ices.play();
+            } else if (weather.equals("Exhausting Sun")) {
+                playerSun.setVisibility(View.INVISIBLE);
+                playerSun.pause();
             }
         }
 
         @Override
         public void showPlayerSpell(String spell) {
             if (spell.equals("Fireball")) {
-                /* TODO */
+                playerCast.setGifResource(R.anim.fireball_back);
+                playerCast.setVisibility(View.VISIBLE);
+                playerCast.play();
             } else if (spell.equals("Lightning")) {
-                /* TODO */
+                playerCast.setGifResource(R.anim.lightning_back);
+                playerCast.setVisibility(View.VISIBLE);
+                playerCast.play();
             }
         }
 
         @Override
         public void showOpponentSpell(String spell) {
             if (spell.equals("Fireball")) {
-                /* TODO */
+                opponentCast.setGifResource(R.anim.fireball_front);
+                opponentCast.setVisibility(View.VISIBLE);
+                opponentCast.play();
             } else if (spell.equals("Lightning")) {
-                /* TODO */
+                opponentCast.setGifResource(R.anim.lightning_front);
+                opponentCast.setVisibility(View.VISIBLE);
+                opponentCast.play();
             }
         }
 
@@ -325,6 +358,11 @@ public class GameActivity extends AppCompatActivity {
         breeze = findViewById(R.id.breeze);
         ices = findViewById(R.id.ices);
         playerEffect = findViewById(R.id.playerEffect);
+
+        playerCast = findViewById(R.id.playerCast);
+        opponentCast = findViewById(R.id.opponentCast);
+        playerSun = findViewById(R.id.playerSun);
+        opponentSun = findViewById(R.id.opponentSun);
 
         controller = new Controller(this.new Painter());
 
