@@ -30,15 +30,17 @@ public interface Painter {
 
     void hidePlayerBuff(String buff);
 
-    void setPlayerEffect(String effect);
+    void setPlayerState(String state);
 
-    void hidePlayerEffect(String effect);
+    void hidePlayerState();
 
-    void setOpponentEffect(String effect);
+    void setOpponentState(String state);
 
-    void hideOpponentEffect(String effect);
+    void hideOpponentState();
 
-    void setWeather(String weather);
+    void setWeatherFront(String weather);
+
+    void setWeatherBack(String weather);
 
     void hideWeather(String weather);
 

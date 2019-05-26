@@ -189,43 +189,56 @@ public class GameActivity extends AppCompatActivity {
         }
 
         @Override
-        public void setPlayerEffect(String effect) {
-            if (effect.equals("Cold")) {
+        public void setPlayerState(String state) {
+            if (state.equals("Cold")) {
                 playerEffect.setImageResource(R.drawable.effect_cold_player);
                 playerEffect.setVisibility(View.VISIBLE);
-            } else if (effect.equals("Frozen")) {
+            } else if (state.equals("Frozen")) {
                 playerEffect.setImageResource(R.drawable.effect_frozen_player);
                 playerEffect.setVisibility(View.VISIBLE);
-            } else if (effect.equals("Wet")) {
+            } else if (state.equals("Wet")) {
                 playerEffect.setImageResource(R.drawable.effect_wet_player);
                 playerEffect.setVisibility(View.VISIBLE);
             }
         }
 
         @Override
-        public void hidePlayerEffect(String effect) {
+        public void hidePlayerState() {
             playerEffect.setVisibility(View.INVISIBLE);
         }
 
         @Override
-        public void setOpponentEffect(String effect) {
+        public void setOpponentState(String state) {
             /* TODO */
         }
 
         @Override
-        public void hideOpponentEffect(String effect) {
+        public void hideOpponentState() {
             /* TODO */
         }
 
         @Override
-        public void setWeather(String weather) {
+        public void setWeatherFront(String weather) {
             if (weather.equals("Fog")) {
                 fog.setVisibility(View.VISIBLE);
-            } else if (weather.equals("Breeze Front")) {
+            } else if (weather.equals("Breeze")) {
                 breeze.setGifResource(R.anim.breeze_front);
                 breeze.setVisibility(View.VISIBLE);
                 breeze.play();
-            } else if (weather.equals("Breeze Back")) {
+            } else if (weather.equals("Ices")) {
+                ices.setGifResource(R.anim.ices);
+                ices.pause();
+                ices.setVisibility(View.VISIBLE);
+            } else if (weather.equals("Exhausting Sun")) {
+                /* TODO */
+            }
+        }
+
+        @Override
+        public void setWeatherBack(String weather) {
+            if (weather.equals("Fog")) {
+                fog.setVisibility(View.VISIBLE);
+            } else if (weather.equals("Breeze")) {
                 breeze.setGifResource(R.anim.breeze_back);
                 breeze.setVisibility(View.VISIBLE);
                 breeze.play();
@@ -242,10 +255,7 @@ public class GameActivity extends AppCompatActivity {
         public void hideWeather(String weather) {
             if (weather.equals("Fog")) {
                 fog.setVisibility(View.INVISIBLE);
-            } else if (weather.equals("Breeze Front")) {
-                breeze.pause();
-                breeze.setVisibility(View.INVISIBLE);
-            } else if (weather.equals("Breeze Back")) {
+            } else if (weather.equals("Breeze")) {
                 breeze.pause();
                 breeze.setVisibility(View.INVISIBLE);
             } else if (weather.equals("Ices")) {
