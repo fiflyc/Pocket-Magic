@@ -15,6 +15,7 @@ public class Controller {
     /* inner logic of the game */
     private Logic logic;
     private Bot bot;
+
     /* Parent painter */
     private Painter painter;
     /* Special AsyncTask for increasing playerMP every x seconds */
@@ -25,8 +26,10 @@ public class Controller {
     private boolean isStopped = false;
 
     /**  */
+
     public Controller(Painter painter) {
         this.painter = painter;
+ 
         logic = new Logic();
         painter.setOpponentName("Kappa, the Twitch meme");
         painter.setMaxHP(logic.getMaxHp());
@@ -106,7 +109,6 @@ public class Controller {
                 e.printStackTrace();
             }
             publishProgress(spells);
-
             return null;
         }
 
