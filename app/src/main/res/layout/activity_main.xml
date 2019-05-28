@@ -17,8 +17,8 @@
 
     <Button
         android:id="@+id/flameButton"
-        android:layout_width="246dp"
-        android:layout_height="393dp"
+        android:layout_width="286dp"
+        android:layout_height="456dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
@@ -53,6 +53,7 @@
         android:background="#6800BCD4"
         android:fontFamily="@font/baloo_tamma"
         android:text="@string/bot"
+        android:textColor="#A15FA3DB"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
