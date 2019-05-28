@@ -55,14 +55,14 @@ public class Controller {
             painter.sendNotification("Not enough mana");
             return;
         }
-        //painter.showPlayerSpell(spell);
+        //painter.showPlayerCast(spell);
         //throwPlayerSpell(spell);
         ThrowPlayerSpell throwPlayerSpell = new ThrowPlayerSpell();
         throwPlayerSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
 
     public void opponentSpell(String spell) {
-        painter.showOpponentCast(spell);
+        painter.showOpponentSpell(spell);
         ThrowOpponentSpell throwOpponentSpell = new ThrowOpponentSpell();
         throwOpponentSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
@@ -76,7 +76,7 @@ public class Controller {
         if (isStopped) {
             return;
         }
-        painter.hideOpponentCast();
+        painter.hideOpponentSpell();
         logic.opponentSpell(spell);
         painter.setPlayerHP(logic.getPlayerHP());
         painter.sendNotification("You've got a damage!");
@@ -90,7 +90,8 @@ public class Controller {
         if (isStopped) {
             return;
         }
-        //painter.hidePlayerSpell();
+        //painter.hidePlayerCast();
+        painter.showPlayerCast(spell);
         logic.playerSpell(spell);
         painter.setPlayerMP(logic.getPlayerMP());
         painter.setOpponentHP(logic.getOpponentHP());
@@ -160,7 +161,7 @@ public class Controller {
 
         @Override
         protected void onProgressUpdate(Void... voids) {
-            opponentSpell("FireBall");
+            opponentSpell("Fire Ball");
         }
     }
 
@@ -255,7 +256,7 @@ public class Controller {
         }
 
         synchronized public void playerSpell(String spell) {
-            //painter.showPlayerSpell(spell);
+            //painter.showPlayerCast(spell);
             //if (true) {//if (spell == "FireBall") {
             playerMP -= getSpellCost(spell);
             //if (target == Target.BODY) {
@@ -265,7 +266,7 @@ public class Controller {
         }
 
         synchronized public void opponentSpell(String spell) {
-            //painter.showOpponentCast(spell);
+            //painter.showOpponentSpell(spell);
             playerHP -= getSpellDamage(spell); //5;
         }
 
@@ -287,13 +288,13 @@ public class Controller {
         }
 
         public int getSpellCost(String spell) {
-            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='" + spell + "'", null);
+            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='FireBall'", null);
             cursor.moveToFirst();
             return cursor.getInt(0);
         }
 
         public int getSpellDamage(String spell) {
-            Cursor cursor = mDb.rawQuery("SELECT damage FROM spells WHERE name='" + spell + "'", null);
+            Cursor cursor = mDb.rawQuery("SELECT damage FROM spells WHERE name='FireBall'", null);
             cursor.moveToFirst();
             return cursor.getInt(0);
         }

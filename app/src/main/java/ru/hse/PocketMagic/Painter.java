@@ -18,9 +18,9 @@ public interface Painter {
 
     void endGame(GameResult result);
 
-    void showOpponentCast(String spell);
+    void showOpponentSpell(String spell);
 
-    void hideOpponentCast();
+    void hideOpponentSpell();
 
     void showOpponentBuff(String buff);
 
@@ -38,17 +38,13 @@ public interface Painter {
 
     void hideOpponentState();
 
-    void setWeatherFront(String weather);
+    void showPlayerCast(String spell);
 
-    void setWeatherBack(String weather);
+    void hidePlayerCast(String spell);
 
-    void hideWeatherFront(String weather);
+    void showOpponentCast(String spell);
 
-    void hideWeatherBack(String weather);
-
-    void showPlayerSpell(String spell);
-
-    void showOpponentSpell(String spell);
+    void hideOpponentCast(String spell);
 
     void sendNotification(String notification);
 
