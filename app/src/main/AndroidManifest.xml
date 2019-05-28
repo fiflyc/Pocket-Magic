@@ -3,14 +3,15 @@
     package="ru.hse.PocketMagic">
 
     <application
-        android:largeHeap="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GameResultsActivity"></activity>
+        <activity android:name=".OpponentSearchActivity"></activity>
+        <activity android:name=".GameResultsActivity" />
         <activity android:name=".GameActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 view.startAnimation(animAlpha);
-                /*Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                Intent intent = new Intent(MainActivity.this, OpponentSearchActivity.class);
                 startActivity(intent);
-                finish();*/
+                finish();
             }
         });
 
