@@ -9,7 +9,6 @@ import android.gesture.GestureOverlayView;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -352,9 +351,9 @@ public class GameActivity extends AppCompatActivity {
         playerSun = findViewById(R.id.playerSun);
         opponentSun = findViewById(R.id.opponentSun);
 
-        if (getIntent().getSerializableExtra("GameType") == GameType.MULTYPLAYER) {
+        if (getIntent().getSerializableExtra("GameType") == GameType.MULTIPLAYER) {
             NetworkController.setUI(this);
-            controller = new Controller(this.new Painter(), GameType.MULTYPLAYER);
+            controller = new Controller(this.new Painter(), GameType.MULTIPLAYER);
         } else {
             controller = new Controller(this.new Painter(), GameType.BOT);
         }

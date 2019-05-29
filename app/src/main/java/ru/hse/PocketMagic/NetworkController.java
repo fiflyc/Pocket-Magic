@@ -28,7 +28,7 @@ public class NetworkController {
 
     public static void startGame() {
         Intent intent = new Intent(currentActivity, GameActivity.class);
-        intent.putExtra("GameType", GameType.MULTYPLAYER);
+        intent.putExtra("GameType", GameType.MULTIPLAYER);
         currentActivity.startActivity(intent);
         currentActivity.finish();
     }
@@ -41,7 +41,7 @@ public class NetworkController {
 
     synchronized public static void setUI(AppCompatActivity activity) {
         currentActivity = activity;
-        if (currentActivity.getClass() == GameActivity.class) {
+        if (currentActivity != null && currentActivity.getClass() == GameActivity.class) {
             currentController = ((GameActivity) currentActivity).getController();
         } else {
             currentController = null;
