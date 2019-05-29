@@ -25,27 +25,35 @@ public class Controller {
     uses for communication between theese 3 cases () */
     private boolean isStopped = false;
 
+    private GameType type;
+
     /**  */
 
     public Controller(Painter painter, GameType type) {
         this.painter = painter;
- 
+        this.type = type;
         logic = new Logic();
-        painter.setOpponentName("Kappa, the Twitch meme");
         painter.setMaxHP(logic.getMaxHp());
         painter.setMaxMP(logic.getMaxMp());
         painter.setPlayerHP(logic.getPlayerHP());
         painter.setPlayerMP(logic.getPlayerMP());
         painter.setOpponentHP(logic.getOpponentHP());
-        bot = new Bot();
-        bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (type == GameType.BOT) {
+            painter.setOpponentName("Kappa, the Twitch meme");
+            bot = new Bot();
+            bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            painter.setOpponentName("Waiting...");
+        }
         generation = new ManaGenerator();
         generation.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void endGame() {
         isStopped = true;
-        bot.stop();
+        if (bot != null) {
+            bot.stop();
+        }
         generation.stop();
     }
 
@@ -57,8 +65,10 @@ public class Controller {
         }
         //painter.showPlayerCast(spell);
         //throwPlayerSpell(spell);
+        NetworkController.sendSpell(spell);
         ThrowPlayerSpell throwPlayerSpell = new ThrowPlayerSpell();
         throwPlayerSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
+        //NetworkController.sendSpell();
     }
 
     public void opponentSpell(String spell) {
