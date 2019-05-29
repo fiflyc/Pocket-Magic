@@ -65,10 +65,11 @@ public class Controller {
         }
         //painter.showPlayerCast(spell);
         //throwPlayerSpell(spell);
-        NetworkController.sendSpell(spell);
+        if (type == GameType.MULTYPLAYER) {
+            NetworkController.sendSpell(spell);
+        }
         ThrowPlayerSpell throwPlayerSpell = new ThrowPlayerSpell();
         throwPlayerSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
-        //NetworkController.sendSpell();
     }
 
     public void opponentSpell(String spell) {
