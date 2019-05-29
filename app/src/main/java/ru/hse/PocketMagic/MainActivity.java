@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (getIntent().getSerializableExtra("Error") == 1) {
+        if (getIntent().getExtras().getInt("Error") == 1) {
             new AlertDialog.Builder(this).setMessage("Connection error")
                     .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
