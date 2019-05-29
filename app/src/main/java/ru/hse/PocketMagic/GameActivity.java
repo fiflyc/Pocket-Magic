@@ -237,45 +237,26 @@ public class GameActivity extends AppCompatActivity {
         public void showOpponentCast(String spell) {
             if (spell.equals("Fire Ball")) {
                 opponentCast.setGifResource(R.drawable.fireball_front);
-<<<<<<< HEAD
                 opponentCast.play();
                 opponentCast.setVisibility(View.VISIBLE);
             } else if (spell.equals("Lightning")) {
                 opponentCast.setGifResource(R.drawable.lightning_front);
                 opponentCast.play();
                 opponentCast.setVisibility(View.VISIBLE);
-=======
-                opponentCast.setVisibility(View.VISIBLE);
-                opponentCast.play();
-            } else if (spell.equals("Lightning")) {
-                opponentCast.setGifResource(R.drawable.lightning_front);
-                opponentCast.setVisibility(View.VISIBLE);
-                opponentCast.play();
->>>>>>> 6a73ab97ba51ef6f73604b1274ad97a85133a71a
             } else if (spell.equals("Fog")) {
                 fog.setVisibility(View.VISIBLE);
             } else if (spell.equals("Breeze")) {
                 breeze.setGifResource(R.drawable.breeze_front);
-<<<<<<< HEAD
                 breeze.play();
                 breeze.setVisibility(View.VISIBLE);
-=======
-                breeze.setVisibility(View.VISIBLE);
-                breeze.play();
->>>>>>> 6a73ab97ba51ef6f73604b1274ad97a85133a71a
             } else if (spell.equals("Ices")) {
                 ices.setGifResource(R.drawable.ices);
                 ices.pause();
                 ices.setVisibility(View.VISIBLE);
             } else if (spell.equals("Exhausting Sun")) {
                 opponentSun.setGifResource(R.drawable.exhausting_sun_front);
-<<<<<<< HEAD
                 opponentSun.play();
                 opponentSun.setVisibility(View.VISIBLE);
-=======
-                opponentSun.setVisibility(View.VISIBLE);
-                opponentSun.play();
->>>>>>> 6a73ab97ba51ef6f73604b1274ad97a85133a71a
             }
         }
 
@@ -284,32 +265,19 @@ public class GameActivity extends AppCompatActivity {
             if (spell.equals("Fog")) {
                 fog.setVisibility(View.INVISIBLE);
             } else if (spell.equals("Breeze")) {
-<<<<<<< HEAD
                 breeze.setVisibility(View.INVISIBLE);
                 breeze.pause();
-=======
-                breeze.pause();
-                breeze.setVisibility(View.INVISIBLE);
->>>>>>> 6a73ab97ba51ef6f73604b1274ad97a85133a71a
             } else if (spell.equals("Ices")) {
                 ices.play();
             } else if (spell.equals("Exhausting Sun")) {
                 opponentSun.setVisibility(View.INVISIBLE);
                 opponentSun.pause();
             } else if (spell.equals("Fire Ball")) {
-<<<<<<< HEAD
                 opponentCast.setVisibility(View.INVISIBLE);
                 opponentCast.pause();
             } else if (spell.equals("Lightning")) {
                 opponentCast.setVisibility(View.INVISIBLE);
                 opponentCast.pause();
-=======
-                opponentCast.pause();
-                opponentCast.setVisibility(View.INVISIBLE);
-            } else if (spell.equals("Lightning")) {
-                opponentCast.pause();
-                opponentCast.setVisibility(View.INVISIBLE);
->>>>>>> 6a73ab97ba51ef6f73604b1274ad97a85133a71a
             }
         }
 

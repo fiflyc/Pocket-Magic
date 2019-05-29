@@ -77,10 +77,7 @@ public class Controller {
             return;
         }
         painter.hideOpponentSpell();
-<<<<<<< HEAD
         painter.showOpponentCast("Fire Ball");
-=======
->>>>>>> 6a73ab97ba51ef6f73604b1274ad97a85133a71a
         logic.opponentSpell(spell);
         painter.setPlayerHP(logic.getPlayerHP());
         painter.sendNotification("You've got a damage!");
