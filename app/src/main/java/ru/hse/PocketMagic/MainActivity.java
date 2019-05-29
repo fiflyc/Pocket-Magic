@@ -1,5 +1,7 @@
 package ru.hse.PocketMagic;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 view.startAnimation(animSize);
                 Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                intent.putExtra("GameType", GameType.BOT);
                 startActivity(intent);
                 finish();
             }
@@ -50,5 +53,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
             }
         });
+
+        if (getIntent().getSerializableExtra("Error") == 1) {
+            new AlertDialog.Builder(this).setMessage("Connection error")
+                    .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            /* Do nothing */
+                        }
+                    }).show();
+        }
     }
 }

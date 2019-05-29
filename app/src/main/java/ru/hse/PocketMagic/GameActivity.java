@@ -92,22 +92,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         public void endGame(GameResult result) {
-            Intent intent = new Intent(GameActivity.this, GameResultsActivity.class);
-
-            switch (result) {
-                case WIN:
-                    intent.putExtra("RESULT", 1);
-                    break;
-                case LOSE:
-                    intent.putExtra("RESULT", -1);
-                    break;
-                case DRAW:
-                    intent.putExtra("RESULT", 0);
-                    break;
-            }
-
-            startActivity(intent);
-            finish();
+            finishGame(result);
         }
 
         public void showOpponentSpell(String spell) {
@@ -333,6 +318,13 @@ public class GameActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        if (getIntent().getSerializableExtra("GameType") == GameType.MULTYPLAYER) {
+            NetworkController.setUI(this);
+            controller = new Controller(this.new Painter(), GameType.MULTYPLAYER);
+        } else {
+            controller = new Controller(this.new Painter(), GameType.BOT);
+        }
+
         GestureLibrary gestureLibrary = GestureLibraries.fromRawResource(getApplicationContext(), R.raw.gestures);
         gestureOverlayView = findViewById(R.id.gestureListener);
         if (!gestureLibrary.load()) {
@@ -365,8 +357,6 @@ public class GameActivity extends AppCompatActivity {
         playerSun = findViewById(R.id.playerSun);
         opponentSun = findViewById(R.id.opponentSun);
 
-        controller = new Controller(this.new Painter());
-
         Caster caster = this.new Caster();
 
         opponentAvatar.setEnabled(false);
@@ -375,4 +365,35 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() { /* Do nothing. */}
+
+    public void finishGame(GameResult result) {
+        if (result == GameResult.ERROR) {
+            Intent intent = new Intent(GameActivity.this, MainActivity.class);
+            intent.putExtra("ERROR", 1);
+            startActivity(intent);
+            finish();
+        }
+
+        Intent intent = new Intent(GameActivity.this, GameResultsActivity.class);;
+        switch (result) {
+            case WIN:
+                intent.putExtra("RESULT", 1);
+                break;
+            case LOSE:
+                intent.putExtra("RESULT", -1);
+                break;
+            case DRAW:
+                intent.putExtra("RESULT", 0);
+                break;
+        }
+
+        NetworkController.setUI(null);
+
+        startActivity(intent);
+        finish();
+    }
+
+    public Controller getController() {
+        return controller;
+    }
 }

@@ -27,7 +27,7 @@ public class Controller {
 
     /**  */
 
-    public Controller(Painter painter) {
+    public Controller(Painter painter, GameType type) {
         this.painter = painter;
  
         logic = new Logic();

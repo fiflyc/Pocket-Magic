@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -42,6 +43,15 @@ public class OpponentSearchActivity extends AppCompatActivity {
         });
 
         signInSilently();
+
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
+        Network network = NetworkController.createNetwork();
+        RoomConfig roomConfig =
+                RoomConfig.builder(network.new CallbackUpdater())
+                        .setOnMessageReceivedListener(network.new MessageListener())
+                        .setRoomStatusUpdateCallback(network.new CallbackHandler())
+                        .setAutoMatchCriteria(autoMatchCriteria)
+                            .build();
     }
 
     @Override
