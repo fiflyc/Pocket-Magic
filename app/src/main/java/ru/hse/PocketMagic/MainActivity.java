@@ -54,14 +54,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (getIntent().getExtras().getInt("Error") == 1) {
-            new AlertDialog.Builder(this).setMessage("Connection error")
-                    .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            /* Do nothing */
-                        }
-                    }).show();
+        try {
+            if (getIntent().getExtras().getInt("Error") == 1) {
+                new AlertDialog.Builder(this).setMessage("Connection error")
+                        .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                /* Do nothing */
+                            }
+                        }).show();
+            }
+        } catch (NullPointerException e) {
+            /* It's okay, do nothing. */
         }
     }
 }

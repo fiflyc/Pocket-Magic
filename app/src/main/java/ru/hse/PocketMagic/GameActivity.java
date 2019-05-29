@@ -7,7 +7,9 @@ import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -61,7 +63,7 @@ public class GameActivity extends AppCompatActivity {
 
     private class Painter implements ru.hse.PocketMagic.Painter {
 
-        public void setOpponentName(String name) {
+        public void setOpponentName(@NonNull String name) {
             opponentName.setText(name);
         }
 
@@ -318,13 +320,6 @@ public class GameActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        if (getIntent().getSerializableExtra("GameType") == GameType.MULTYPLAYER) {
-            NetworkController.setUI(this);
-            controller = new Controller(this.new Painter(), GameType.MULTYPLAYER);
-        } else {
-            controller = new Controller(this.new Painter(), GameType.BOT);
-        }
-
         GestureLibrary gestureLibrary = GestureLibraries.fromRawResource(getApplicationContext(), R.raw.gestures);
         gestureOverlayView = findViewById(R.id.gestureListener);
         if (!gestureLibrary.load()) {
@@ -356,6 +351,13 @@ public class GameActivity extends AppCompatActivity {
         opponentCast = findViewById(R.id.opponentCast);
         playerSun = findViewById(R.id.playerSun);
         opponentSun = findViewById(R.id.opponentSun);
+
+        if (getIntent().getSerializableExtra("GameType") == GameType.MULTYPLAYER) {
+            NetworkController.setUI(this);
+            controller = new Controller(this.new Painter(), GameType.MULTYPLAYER);
+        } else {
+            controller = new Controller(this.new Painter(), GameType.BOT);
+        }
 
         Caster caster = this.new Caster();
 
