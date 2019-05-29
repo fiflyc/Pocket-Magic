@@ -65,7 +65,7 @@ public class Controller {
         }
         //painter.showPlayerCast(spell);
         //throwPlayerSpell(spell);
-        if (type == GameType.MULTYPLAYER) {
+        if (type == GameType.MULTIPLAYER) {
             NetworkController.sendSpell(spell);
         }
         ThrowPlayerSpell throwPlayerSpell = new ThrowPlayerSpell();
