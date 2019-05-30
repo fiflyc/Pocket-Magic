@@ -66,7 +66,9 @@ public class OpponentSearchActivity extends AppCompatActivity {
                 if (message == null || message.isEmpty()) {
                     message = "Error while sign-in in your Google Play Account";
                 }
-                new AlertDialog.Builder(this).setMessage(message)
+                new AlertDialog.Builder(this)
+                        .setMessage(message)
+                        .setCancelable(false)
                         .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
