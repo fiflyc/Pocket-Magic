@@ -70,7 +70,9 @@ public class OpponentSearchActivity extends AppCompatActivity {
                         .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                /* Do nothing */
+                                Intent intent = new Intent(OpponentSearchActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
                             }
                         }).show();
             }
