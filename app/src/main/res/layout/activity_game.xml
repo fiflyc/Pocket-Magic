@@ -17,18 +17,6 @@
         app:layout_constraintTop_toTopOf="@+id/gestureListener"
         app:srcCompat="@drawable/temp_bot_image" />
 
-    <ImageView
-        android:id="@+id/fog"
-        android:layout_width="422dp"
-        android:layout_height="612dp"
-        android:scaleType="fitXY"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/gestureListener"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/gestureListener"
-        app:layout_constraintTop_toTopOf="@+id/gestureListener"
-        app:srcCompat="@drawable/weather_fog" />
-
     <com.cunoraz.gifview.library.GifView
         android:id="@+id/playerSun"
         android:layout_width="wrap_content"
@@ -52,6 +40,18 @@
         app:layout_constraintBottom_toTopOf="@id/playerMP"
         app:layout_constraintEnd_toEndOf="@+id/playerEffect"
         app:layout_constraintTop_toBottomOf="@+id/opponentSpell" />
+
+    <ImageView
+        android:id="@+id/fog"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/gestureListener"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/gestureListener"
+        app:layout_constraintTop_toTopOf="@+id/gestureListener"
+        app:srcCompat="@drawable/weather_fog" />
 
     <com.cunoraz.gifview.library.GifView
         android:id="@+id/ices"
