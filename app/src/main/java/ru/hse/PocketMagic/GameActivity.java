@@ -9,6 +9,7 @@ import android.gesture.GestureOverlayView;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -16,7 +17,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cunoraz.gifview.library.GifView;
+import java.io.IOException;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -42,25 +46,36 @@ public class GameActivity extends AppCompatActivity {
     private ImageView opponentBuffB;
 
     private ImageView fog;
-    private GifView breeze;
-    private GifView ices;
+    private GifImageView breeze;
+    private GifImageView ices;
     private ImageView playerEffect;
 
-    private GifView playerCast;
-    private GifView playerSun;
-    private GifView opponentCast;
-    private GifView opponentSun;
+    private GifImageView playerCast;
+    private GifImageView playerSun;
+    private GifImageView opponentCast;
+    private GifImageView opponentSun;
 
     private GestureOverlayView gestureOverlayView;
 
     public class Caster {
 
         public void cast(String spell) {
+            Log.wtf("Pocket Magic", "Spell: " + spell);
             controller.playerSpell(spell, Target.BODY);
         }
     }
 
     private class Painter implements ru.hse.PocketMagic.Painter {
+
+        private GifDrawable breezeBackAnim;
+        private GifDrawable breezeFrontAnim;
+        private GifDrawable icesAnim;
+        private GifDrawable fireBallBackAnim;
+        private GifDrawable fireBallFrontAnim;
+        private GifDrawable lightningBackAnim;
+        private GifDrawable lightningFrontAnim;
+        private GifDrawable exhaustingSunBackAnim;
+        private GifDrawable exhaustingSunFrontAnim;
 
         public void setOpponentName(@NonNull String name) {
             opponentName.setText(name);
@@ -100,7 +115,7 @@ public class GameActivity extends AppCompatActivity {
             if (spell.equals("Heal")) {
                 opponentSpell.setImageResource(R.drawable.heal);
                 opponentSpell.setVisibility(View.VISIBLE);
-            } else if (spell.equals("Sun Shield")) {
+            } else if (spell.equals("SunShield")) {
                 opponentSpell.setImageResource(R.drawable.sunshield);
                 opponentSpell.setVisibility(View.VISIBLE);
             } else if (spell.equals("Freeze")) {
@@ -112,13 +127,13 @@ public class GameActivity extends AppCompatActivity {
             } else if (spell.equals("Breeze")) {
                 opponentSpell.setImageResource(R.drawable.breeze);
                 opponentSpell.setVisibility(View.VISIBLE);
-            } else if (spell.equals("Fire Ball")) {
+            } else if (spell.equals("FireBall")) {
                 opponentSpell.setImageResource(R.drawable.fireball);
                 opponentSpell.setVisibility(View.VISIBLE);
             } else if (spell.equals("Lightning")) {
                 opponentSpell.setImageResource(R.drawable.lightning);
                 opponentSpell.setVisibility(View.VISIBLE);
-            } else if (spell.equals("Exhausting Sun")) {
+            } else if (spell.equals("ExhaustingSun")) {
                 opponentSpell.setImageResource(R.drawable.exhausting_sun);
                 opponentSpell.setVisibility(View.VISIBLE);
             }
@@ -133,7 +148,7 @@ public class GameActivity extends AppCompatActivity {
             if (buff.equals("Heal")) {
                 opponentBuffB.setImageResource(R.drawable.buff_heal);
                 opponentBuffB.setVisibility(View.VISIBLE);
-            } else if (buff.equals("SunShieldA")) {
+            } else if (buff.equals("SunShield")) {
                 opponentBuffA.setImageResource(R.drawable.buff_sunshield_a);
                 opponentBuffA.setVisibility(View.VISIBLE);
             } else if (buff.equals("SunShieldB")) {
@@ -146,7 +161,7 @@ public class GameActivity extends AppCompatActivity {
         public void hideOpponentBuff(String buff) {
             if (buff.equals("Heal")) {
                 opponentBuffB.setVisibility(View.INVISIBLE);
-            } else if (buff.equals("SunShieldA")) {
+            } else if (buff.equals("SunShield")) {
                 opponentBuffA.setVisibility(View.INVISIBLE);
             } else if (buff.equals("SunShieldB")) {
                 opponentBuffA.setVisibility(View.INVISIBLE);
@@ -180,10 +195,7 @@ public class GameActivity extends AppCompatActivity {
 
         @Override
         public void setPlayerState(String state) {
-            if (state.equals("Cold")) {
-                playerEffect.setImageResource(R.drawable.effect_cold_player);
-                playerEffect.setVisibility(View.VISIBLE);
-            } else if (state.equals("Frozen")) {
+            if (state.equals("Frozen")) {
                 playerEffect.setImageResource(R.drawable.effect_frozen_player);
                 playerEffect.setVisibility(View.VISIBLE);
             } else if (state.equals("Wet")) {
@@ -209,97 +221,188 @@ public class GameActivity extends AppCompatActivity {
 
         @Override
         public void showPlayerCast(String spell) {
-            if (spell.equals("Fire Ball")) {
-                playerCast.setGifResource(R.drawable.fireball_back);
-                playerCast.setVisibility(View.VISIBLE);
-                playerCast.play();
-            } else if (spell.equals("Lightning")) {
-                playerCast.setGifResource(R.drawable.lightning_back);
-                playerCast.setVisibility(View.VISIBLE);
-                playerCast.play();
-            } else if (spell.equals("Fog")) {
-                fog.setVisibility(View.VISIBLE);
-            } else if (spell.equals("Breeze")) {
-                breeze.setGifResource(R.drawable.breeze_back);
-                breeze.setVisibility(View.VISIBLE);
-                breeze.play();
-            } else if (spell.equals("Ices")) {
-                ices.setGifResource(R.drawable.ices);
-                ices.pause();
-                ices.setVisibility(View.VISIBLE);
-            } else if (spell.equals("Exhausting Sun")) {
-                playerSun.setGifResource(R.drawable.exhausting_sun_back);
-                playerSun.setVisibility(View.VISIBLE);
-                playerSun.play();
-            }
-        }
+            sendNotification(spell);
 
-        @Override
-        public void showOpponentCast(String spell) {
-            if (spell.equals("Fire Ball")) {
-                opponentCast.setGifResource(R.drawable.fireball_front);
-                opponentCast.play();
-                opponentCast.setVisibility(View.VISIBLE);
-            } else if (spell.equals("Lightning")) {
-                opponentCast.setGifResource(R.drawable.lightning_front);
-                opponentCast.play();
-                opponentCast.setVisibility(View.VISIBLE);
-            } else if (spell.equals("Fog")) {
-                fog.setVisibility(View.VISIBLE);
-            } else if (spell.equals("Breeze")) {
-                breeze.setGifResource(R.drawable.breeze_front);
-                breeze.play();
-                breeze.setVisibility(View.VISIBLE);
-            } else if (spell.equals("Ices")) {
-                ices.setGifResource(R.drawable.ices);
-                ices.pause();
-                ices.setVisibility(View.VISIBLE);
-            } else if (spell.equals("Exhausting Sun")) {
-                opponentSun.setGifResource(R.drawable.exhausting_sun_front);
-                opponentSun.play();
-                opponentSun.setVisibility(View.VISIBLE);
-            }
-        }
+            try {
+                switch (spell) {
+                    case "FireBall":
+                        fireBallBackAnim = new GifDrawable(getContext().getResources(), R.drawable.fireball_back);
+                        playerCast.setImageDrawable(fireBallBackAnim);
 
-        @Override
-        public void hideOpponentCast(String spell) {
-            if (spell.equals("Fog")) {
-                fog.setVisibility(View.INVISIBLE);
-            } else if (spell.equals("Breeze")) {
-                breeze.setVisibility(View.INVISIBLE);
-                breeze.pause();
-            } else if (spell.equals("Ices")) {
-                ices.play();
-            } else if (spell.equals("Exhausting Sun")) {
-                opponentSun.setVisibility(View.INVISIBLE);
-                opponentSun.pause();
-            } else if (spell.equals("Fire Ball")) {
-                opponentCast.setVisibility(View.INVISIBLE);
-                opponentCast.pause();
-            } else if (spell.equals("Lightning")) {
-                opponentCast.setVisibility(View.INVISIBLE);
-                opponentCast.pause();
+                        fireBallBackAnim.seekTo(0);
+                        fireBallBackAnim.start();
+                        playerCast.setVisibility(View.VISIBLE);
+                        break;
+                    case "Lightning":
+                        lightningBackAnim = new GifDrawable(getContext().getResources(), R.drawable.lightning_back);
+                        playerCast.setImageDrawable(lightningBackAnim);
+
+                        lightningBackAnim.seekTo(0);
+                        lightningBackAnim.start();
+                        playerCast.setVisibility(View.VISIBLE);
+                        break;
+                    case "Fog":
+                        fog.setVisibility(View.VISIBLE);
+                        break;
+                    case "Breeze":
+                        breezeBackAnim = new GifDrawable(getContext().getResources(), R.drawable.breeze_back);
+                        breeze.setImageDrawable(breezeFrontAnim);
+
+                        breezeBackAnim.seekTo(0);
+                        breezeBackAnim.setSpeed(2.0f);
+                        breezeBackAnim.start();
+                        breeze.setVisibility(View.VISIBLE);
+                        break;
+                    case "Ices":
+                        icesAnim = new GifDrawable(getContext().getResources(), R.drawable.ices);
+                        ices.setImageDrawable(icesAnim);
+
+                        icesAnim.seekTo(0);
+                        icesAnim.stop();
+                        ices.setVisibility(View.VISIBLE);
+                        break;
+                    case "ExhaustingSun":
+                        exhaustingSunBackAnim = new GifDrawable(getContext().getResources(), R.drawable.exhausting_sun_back);
+                        opponentSun.setImageDrawable(exhaustingSunBackAnim);
+
+                        exhaustingSunBackAnim.seekTo(0);
+                        exhaustingSunBackAnim.setSpeed(2.0f);
+                        exhaustingSunBackAnim.start();
+                        playerSun.setVisibility(View.VISIBLE);
+                        break;
+                }
+            } catch (IOException e) {
+                Log.wtf("Pocket Magic", "Gif exception");
+                e.printStackTrace();
             }
         }
 
         @Override
         public void hidePlayerCast(String spell) {
-            if (spell.equals("Fog")) {
-                fog.setVisibility(View.INVISIBLE);
-            } else if (spell.equals("Breeze")) {
-                breeze.pause();
-                breeze.setVisibility(View.INVISIBLE);
-            } else if (spell.equals("Ices")) {
-                ices.play();
-            } else if (spell.equals("Exhausting Sun")) {
-                playerSun.setVisibility(View.INVISIBLE);
-                playerSun.pause();
-            } else if (spell.equals("Fire Ball")) {
-                playerCast.pause();
-                playerCast.setVisibility(View.INVISIBLE);
-            } else if (spell.equals("Lightning")) {
-                playerCast.pause();
-                playerCast.setVisibility(View.INVISIBLE);
+            switch (spell) {
+                case "FireBall":
+                    playerCast.setVisibility(View.INVISIBLE);
+                    fireBallBackAnim.stop();
+                    fireBallBackAnim.recycle();
+                    fireBallBackAnim = null;
+                    break;
+                case "Lightning":
+                    playerCast.setVisibility(View.INVISIBLE);
+                    lightningBackAnim.stop();
+                    lightningBackAnim.recycle();
+                    lightningBackAnim = null;
+                case "Fog":
+                    fog.setVisibility(View.INVISIBLE);
+                    break;
+                case "Breeze":
+                    breeze.setVisibility(View.INVISIBLE);
+                    breezeBackAnim.stop();
+                    breezeBackAnim.recycle();
+                    breezeBackAnim = null;
+                    break;
+                case "Ices":
+                    icesAnim.seekTo(0);
+                    icesAnim.start();
+                    break;
+                case "ExhaustingSun":
+                    playerSun.setVisibility(View.INVISIBLE);
+                    exhaustingSunBackAnim.stop();
+                    exhaustingSunBackAnim.recycle();
+                    exhaustingSunFrontAnim = null;
+                    break;
+            }
+        }
+
+        @Override
+        public void showOpponentCast(String spell) {
+            try {
+                switch (spell) {
+                    case "Fire Ball":
+                        fireBallFrontAnim = new GifDrawable(getContext().getResources(), R.drawable.fireball_front);
+                        opponentCast.setImageDrawable(fireBallFrontAnim);
+
+                        fireBallFrontAnim.seekTo(0);
+                        fireBallFrontAnim.start();
+                        opponentCast.setVisibility(View.VISIBLE);
+                        break;
+                    case "Lightning":
+                        lightningFrontAnim = new GifDrawable(getContext().getResources(), R.drawable.lightning_front);
+                        opponentCast.setImageDrawable(lightningFrontAnim);
+
+                        lightningFrontAnim.seekTo(0);
+                        lightningFrontAnim.start();
+                        opponentCast.setVisibility(View.VISIBLE);
+                        break;
+                    case "Fog":
+                        fog.setVisibility(View.VISIBLE);
+                        break;
+                    case "Breeze":
+                        breezeFrontAnim = new GifDrawable(getContext().getResources(), R.drawable.breeze_front);
+                        breeze.setImageDrawable(breezeFrontAnim);
+
+                        breezeFrontAnim.seekTo(0);
+                        breezeFrontAnim.setSpeed(2.0f);
+                        breezeFrontAnim.start();
+                        breeze.setVisibility(View.VISIBLE);
+                        break;
+                    case "Ices":
+                        icesAnim = new GifDrawable(getContext().getResources(), R.drawable.ices);
+                        ices.setImageDrawable(icesAnim);
+
+                        icesAnim.seekTo(0);
+                        icesAnim.stop();
+                        ices.setVisibility(View.VISIBLE);
+                        break;
+                    case "ExhaustingSun":
+                        exhaustingSunFrontAnim = new GifDrawable(getContext().getResources(), R.drawable.exhausting_sun_front);
+                        opponentSun.setImageDrawable(exhaustingSunFrontAnim);
+
+                        exhaustingSunFrontAnim.seekTo(0);
+                        exhaustingSunFrontAnim.setSpeed(2.0f);
+                        exhaustingSunFrontAnim.start();
+                        opponentSun.setVisibility(View.VISIBLE);
+                        break;
+                }
+            } catch (IOException e) {
+                Log.wtf("Pocket Magic", "Gif exception");
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void hideOpponentCast(String spell) {
+            switch (spell) {
+                case "FireBall":
+                    opponentCast.setVisibility(View.INVISIBLE);
+                    fireBallFrontAnim.stop();
+                    fireBallFrontAnim.recycle();
+                    fireBallFrontAnim = null;
+                    break;
+                case "Lightning":
+                    opponentCast.setVisibility(View.INVISIBLE);
+                    lightningFrontAnim.stop();
+                    lightningFrontAnim.recycle();
+                    lightningFrontAnim = null;
+                    break;
+                case "Fog":
+                    fog.setVisibility(View.INVISIBLE);
+                    break;
+                case "Breeze":
+                    breeze.setVisibility(View.INVISIBLE);
+                    breezeFrontAnim.stop();
+                    breezeFrontAnim.recycle();
+                    breezeFrontAnim = null;
+                    break;
+                case "Ices":
+                    icesAnim.seekTo(0);
+                    icesAnim.start();
+                    break;
+                case "ExhaustingSun":
+                    opponentSun.setVisibility(View.INVISIBLE);
+                    exhaustingSunFrontAnim.stop();
+                    exhaustingSunFrontAnim.recycle();
+                    exhaustingSunFrontAnim = null;
+                    break;
             }
         }
 
@@ -341,8 +444,8 @@ public class GameActivity extends AppCompatActivity {
         opponentBuffA = findViewById(R.id.opponentBuffA);
         opponentBuffB = findViewById(R.id.opponentBuffB);
 
-        fog = findViewById(R.id.fog);
         breeze = findViewById(R.id.breeze);
+        fog = findViewById(R.id.fog);
         ices = findViewById(R.id.ices);
         playerEffect = findViewById(R.id.playerEffect);
 

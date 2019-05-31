@@ -24,7 +24,7 @@ public class GestureListener implements GestureOverlayView.OnGesturePerformedLis
         if (predictionList.size() > 0) {
             Prediction firstPrediction = predictionList.get(0);
 
-            if (firstPrediction.score > 3) {
+            if (firstPrediction.score > 2) {
                 caster.cast(firstPrediction.name);
             }
         }

@@ -88,7 +88,7 @@ public class Controller {
             return;
         }
         painter.hideOpponentSpell();
-        painter.showOpponentCast("Fire Ball");
+        painter.showOpponentCast("FireBall");
         logic.opponentSpell(spell);
         painter.setPlayerHP(logic.getPlayerHP());
         painter.sendNotification("You've got a damage!");
@@ -173,7 +173,7 @@ public class Controller {
 
         @Override
         protected void onProgressUpdate(Void... voids) {
-            opponentSpell("Fire Ball");
+            opponentSpell("FireBall");
         }
     }
 
@@ -300,15 +300,17 @@ public class Controller {
         }
 
         public int getSpellCost(String spell) {
-            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='FireBall'", null);
+            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name=?", new String[] {spell});
             cursor.moveToFirst();
             return cursor.getInt(0);
         }
 
         public int getSpellDamage(String spell) {
-            Cursor cursor = mDb.rawQuery("SELECT damage FROM spells WHERE name='FireBall'", null);
+            Cursor cursor = mDb.rawQuery("SELECT damage FROM spells WHERE name=?", new String[] {spell});
             cursor.moveToFirst();
-            return cursor.getInt(0);
+            // Just for testing:
+            //return cursor.getInt(0);
+            return 0;
         }
 
 
