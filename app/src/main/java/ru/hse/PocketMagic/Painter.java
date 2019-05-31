@@ -40,11 +40,15 @@ public interface Painter {
 
     void showPlayerCast(String spell);
 
-    void hidePlayerCast(String spell);
-
     void showOpponentCast(String spell);
 
-    void hideOpponentCast(String spell);
+    void showWeatherFront(String weather);
+
+    void hideWeatherFront(String weather);
+
+    void showWeatherBack(String weather);
+
+    void hideWeatherBack(String weather);
 
     void sendNotification(String notification);
 
