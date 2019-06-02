@@ -143,7 +143,7 @@ public class Controller {
         protected Void doInBackground(String... spells) {
             try {
                 TimeUnit.SECONDS.sleep(2);
-                logic.getSpellCost(spells[0]);
+                logic.getCostByName(spells[0]);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -280,25 +280,25 @@ public class Controller {
         synchronized public void playerSpell(String spell) {
             //painter.showPlayerCast(spell);
             //if (true) {//if (spell == "FireBall") {
-            playerMP -= getSpellCost(spell);
+            playerMP -= getCostByName(spell);
             //if (target == Target.BODY) {
-                opponentHP -= getSpellDamage(spell);
+                opponentHP -= getDamageByName(spell);
             //}
             //}
         }
 
         synchronized public void opponentSpell(String spell) {
             //painter.showOpponentSpell(spell);
-            playerHP -= getSpellDamage(spell); //5;
+            playerHP -= getDamageByName(spell); //5;
         }
 
         public String ableToThrowTheSpell(String spell, Target target) {
-            if (playerMP < getSpellCost(spell) ) {
+            if (playerMP < getCostByName(spell) ) {
                 //return false;
                 return  ("Not enough mana for the spell " + spell);
             }
             if (target == Target.NOWHERE) {
-                playerMP -= getSpellCost(spell);
+                playerMP -= getCostByName(spell);
                 return "Miss!";
             }
             return "ok";
@@ -343,7 +343,7 @@ public class Controller {
 
         public int getDurationByName(String spell) {
             Cursor cursor = mDb.rawQuery("SELECT duration FROM spells WHERE name=?", new String[] {spell});
-            cursor.moveToFirst()
+            cursor.moveToFirst();
             return cursor.getInt(0);
         }
 
