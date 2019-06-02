@@ -67,16 +67,17 @@ public class Controller {
         //painter.showPlayerCast(spell);
         //throwPlayerSpell(spell);
         if (type == GameType.MULTIPLAYER) {
-            NetworkController.sendSpell(spell);
+            NetworkController.sendSpell(logic.getIDByName(spell));
         }
         ThrowPlayerSpell throwPlayerSpell = new ThrowPlayerSpell();
         throwPlayerSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
 
-    public void opponentSpell(String spell) {
-        painter.showOpponentSpell(spell);
+    public void opponentSpell(int spellID) {
+        painter.sendNotification(logic.getNameById(spellID));
+        painter.showOpponentSpell(logic.getNameById(spellID));
         ThrowOpponentSpell throwOpponentSpell = new ThrowOpponentSpell();
-        throwOpponentSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
+        throwOpponentSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, logic.getNameById(spellID));
     }
 
     private void generateMana(int mana) {
@@ -174,7 +175,7 @@ public class Controller {
 
         @Override
         protected void onProgressUpdate(Void... voids) {
-            opponentSpell("FireBall");
+            opponentSpell(7);
         }
     }
 
@@ -298,6 +299,18 @@ public class Controller {
         synchronized public void generateMana(int mana) {
             playerMP += mana;
             playerMP = min(playerMP, MAX_MP);
+        }
+
+        public String getNameById(int spellID) {
+            Cursor cursor = mDb.rawQuery("SELECT name FROM spells WHERE _id=" + String.valueOf(spellID), null);
+            cursor.moveToFirst();
+            return cursor.getString(0);
+        }
+
+        public int getIDByName(String spell) {
+            Cursor cursor = mDb.rawQuery("SELECT id FROM spells WHERE name='" + spell + "'", null);
+            cursor.moveToFirst();
+            return cursor.getInt(0);
         }
 
         public int getSpellCost(String spell) {

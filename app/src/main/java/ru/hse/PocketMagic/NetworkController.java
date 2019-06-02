@@ -53,7 +53,7 @@ public class NetworkController {
     }
 
     public static void receiveSpell(int spellID) {
-        switch (spellID) {
+        /*switch (spellID) {
             case FIRE_BALL:
                 currentController.opponentSpell("FireBall");
                 break;
@@ -79,9 +79,12 @@ public class NetworkController {
                 currentController.opponentSpell("ExhaustingSun");
                 break;
         }
+        */
+        currentController.opponentSpell(spellID);
     }
 
-    public static void sendSpell(String spell) {
+    public static void sendSpell(int spellID) {
+        /*
         switch (spell) {
             case "FireBall":
                 network.sendMessage(ByteBuffer.allocate(4).putInt(FIRE_BALL).array());
@@ -108,5 +111,8 @@ public class NetworkController {
                 network.sendMessage(ByteBuffer.allocate(4).putInt(EXHAUSTING_SUN).array());
                 break;
         }
+        */
+        network.sendMessage(ByteBuffer.allocate(4).putInt(spellID).array());
     }
+
 }
