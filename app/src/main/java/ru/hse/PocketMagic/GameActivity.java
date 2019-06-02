@@ -191,11 +191,11 @@ public class GameActivity extends AppCompatActivity {
         }
 
         @Override
-        public void setPlayerState(String state) {
-            if (state.equals("Frozen")) {
+        public void setPlayerState(PlayerState state) {
+            if (state == PlayerState.FROZEN) {
                 playerEffect.setImageResource(R.drawable.effect_frozen_player);
                 playerEffect.setVisibility(View.VISIBLE);
-            } else if (state.equals("Wet")) {
+            } else if (state == PlayerState.WET) {
                 playerEffect.setImageResource(R.drawable.effect_wet_player);
                 playerEffect.setVisibility(View.VISIBLE);
             }
@@ -207,7 +207,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         @Override
-        public void setOpponentState(String state) {
+        public void setOpponentState(PlayerState state) {
             /* TODO */
         }
 

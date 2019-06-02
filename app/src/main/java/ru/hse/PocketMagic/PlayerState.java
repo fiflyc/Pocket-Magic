@@ -1,4 +1,7 @@
 package ru.hse.PocketMagic;
 
-public class PlayerState {
+public enum PlayerState {
+    NORMAL,
+    FROZEN,
+    WET
 }

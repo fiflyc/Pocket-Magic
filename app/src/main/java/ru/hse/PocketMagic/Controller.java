@@ -64,6 +64,7 @@ public class Controller {
             painter.sendNotification("Not enough mana");
             return;
         }
+        painter.lockInput();
         //painter.showPlayerCast(spell);
         //throwPlayerSpell(spell);
         if (type == GameType.MULTIPLAYER) {
@@ -113,6 +114,7 @@ public class Controller {
             endGame();
             painter.endGame(GameResult.WIN);
         }
+        painter.unlockInput();
     }
 
     private class ThrowOpponentSpell extends AsyncTask<String, String, Void> {
@@ -139,6 +141,7 @@ public class Controller {
         protected Void doInBackground(String... spells) {
             try {
                 TimeUnit.SECONDS.sleep(2);
+                logic.getSpellCost(spells[0]);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

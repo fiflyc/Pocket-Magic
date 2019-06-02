@@ -30,11 +30,11 @@ public interface Painter {
 
     void hidePlayerBuff(String buff);
 
-    void setPlayerState(String state);
+    void setPlayerState(PlayerState state);
 
     void hidePlayerState();
 
-    void setOpponentState(String state);
+    void setOpponentState(PlayerState state);
 
     void hideOpponentState();
 
