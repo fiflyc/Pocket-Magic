@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -300,7 +301,8 @@ public class Controller {
         }
 
         public int getSpellCost(String spell) {
-            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name=?", new String[] {spell});
+            Log.wtf("Pocket Magic", "DB: " + spell);
+            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='" + spell + "'", null);
             cursor.moveToFirst();
             return cursor.getInt(0);
         }
