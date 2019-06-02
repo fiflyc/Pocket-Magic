@@ -57,15 +57,12 @@ public class GameActivity extends AppCompatActivity {
 
     private GestureOverlayView gestureOverlayView;
 
-    public class Caster {
+    public interface Caster {
 
-        public void cast(String spell) {
-            Log.wtf("Pocket Magic", "Spell: " + spell);
-            controller.playerSpell(spell, Target.BODY);
-        }
+        void cast(String spell);
     }
 
-    private class Painter implements ru.hse.PocketMagic.Painter {
+    private class Painter implements ru.hse.PocketMagic.Painter, Caster {
 
         private GifDrawable breezeBackAnim;
         private GifDrawable breezeFrontAnim;
@@ -410,8 +407,23 @@ public class GameActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), notification, Toast.LENGTH_SHORT).show();
         }
 
+        @Override
+        public void lockInput() {
+            gestureOverlayView.setVisibility(View.INVISIBLE);
+        }
+
+        @Override
+        public void unlockInput() {
+            gestureOverlayView.setVisibility(View.VISIBLE);
+        }
+
         public Context getContext() {
             return GameActivity.this;
+        }
+
+        @Override
+        public void cast(String spell) {
+            controller.playerSpell(spell, Target.BODY);
         }
     }
 
@@ -454,17 +466,16 @@ public class GameActivity extends AppCompatActivity {
         playerSun = findViewById(R.id.playerSun);
         opponentSun = findViewById(R.id.opponentSun);
 
+        Painter painter = this.new Painter();
         if (getIntent().getSerializableExtra("GameType") == GameType.MULTIPLAYER) {
             NetworkController.setUI(this);
-            controller = new Controller(this.new Painter(), GameType.MULTIPLAYER);
+            controller = new Controller(painter, GameType.MULTIPLAYER);
         } else {
-            controller = new Controller(this.new Painter(), GameType.BOT);
+            controller = new Controller(painter, GameType.BOT);
         }
 
-        Caster caster = this.new Caster();
-
         opponentAvatar.setEnabled(false);
-        gestureOverlayView.addOnGesturePerformedListener(new GestureListener(gestureLibrary, caster));
+        gestureOverlayView.addOnGesturePerformedListener(new GestureListener(gestureLibrary, painter));
     }
 
     @Override

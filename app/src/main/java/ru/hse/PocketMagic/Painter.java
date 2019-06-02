@@ -48,5 +48,9 @@ public interface Painter {
 
     void sendNotification(String notification);
 
+    void lockInput();
+
+    void unlockInput();
+
     Context getContext();
 }
