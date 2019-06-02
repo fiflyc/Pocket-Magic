@@ -376,7 +376,9 @@ public class Controller {
             Cursor cursor = mDb.rawQuery("SELECT * FROM spells", null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                result.add( new Spell( cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getString(4)) );
+                result.add( new Spell( cursor.getString(1), cursor.getInt(2),
+                        cursor.getInt(3), cursor.getInt(4), cursor.getInt(5),
+                        cursor.getString(6), cursor.getInt(7), cursor.getString(8)) );
                 cursor.moveToNext();
             }
             return result;
