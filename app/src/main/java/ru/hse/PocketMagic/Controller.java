@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Math.log;
 import static java.lang.Math.min;
 
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! some useless methods in logic !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
@@ -108,15 +109,31 @@ public class Controller {
             return;
         }
         //painter.hidePlayerCast();
-        painter.showPlayerCast(spell);
+        showPlayerCast(spell);
         logic.playerSpell(spell);
         painter.setPlayerMP(logic.getPlayerMP());
+        painter.setPlayerHP(logic.playerHP);
         painter.setOpponentHP(logic.getOpponentHP());
         if (logic.getOpponentHP() == 0) {
             endGame();
             painter.endGame(GameResult.WIN);
         }
         painter.unlockInput();
+    }
+
+    private void showPlayerCast(String spell) {
+        String spellType = logic.getTypeByName(spell);
+        if (spellType == "spell") {
+            painter.showPlayerCast(spell);
+        }
+        if (spellType == "buff") {
+            painter.showPlayerCast(spell);
+            painter.setPlayerBuff(spell);
+        }
+        if (spellType == "effect") {
+            painter.setOpponentState(logic.opponentState);
+            painter.showPlayerCast(spell);
+        }
     }
 
     private class ThrowOpponentSpell extends AsyncTask<String, String, Void> {
@@ -142,12 +159,18 @@ public class Controller {
         @Override
         protected Void doInBackground(String... spells) {
             try {
-                TimeUnit.SECONDS.sleep(2);
-                logic.getCostByName(spells[0]);
+                TimeUnit.SECONDS.sleep(logic.getCastByName(spells[0]));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            publishProgress(spells);
+            for (int i = 0; i < logic.getDurationByName(spells[0]); i++) {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                publishProgress(spells);
+            }
             return null;
         }
 
@@ -236,25 +259,6 @@ public class Controller {
             } catch (SQLException mSQLException) {
                 throw mSQLException;
             }
-/*
-            //Отправляем запрос в БД
-            Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='FireBall'", null);
-            cursor.moveToFirst();
-            //Пробегаем по всем клиентам
-            while (!cursor.isAfterLast()) {
-                //client = new HashMap<String, Object>();
-
-                //Заполняем клиента
-                //client.put("name",  cursor.getString(1));
-                //client.put("age",  cursor.getString(2));
-
-                painter.sendAlert(cursor.getString( 0));
-                //Переходим к следующему клиенту
-                cursor.moveToNext();
-            }
-            cursor.close();
-
-*/
         }
 
         public int getPlayerHP() {
@@ -281,8 +285,9 @@ public class Controller {
             //painter.showPlayerCast(spell);
             //if (true) {//if (spell == "FireBall") {
             playerMP -= getCostByName(spell);
+            playerHP += getHealingByName(spell);
             //if (target == Target.BODY) {
-                opponentHP -= getDamageByName(spell);
+            opponentHP -= getDamageByName(spell);
             //}
             //}
         }
