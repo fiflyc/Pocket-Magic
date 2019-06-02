@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.min;
 
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! some useless methods in logic !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
 public class Controller {
     /* inner logic of the game */
     private Logic logic;
@@ -219,6 +221,9 @@ public class Controller {
         private DatabaseHelper mDBHelper;
         private SQLiteDatabase mDb;
 
+        private PlayerState playerState;
+        private PlayerState opponentState;
+
         public Logic() {
             mDBHelper = new DatabaseHelper(painter.getContext());
             try {
@@ -316,21 +321,55 @@ public class Controller {
             return cursor.getInt(0);
         }
 
-        public int getSpellCost(String spell) {
-            Log.wtf("Pocket Magic", "DB: " + spell);
+        public int getCostByName(String spell) {
+            //Log.wtf("Pocket Magic", "DB: " + spell);
             Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='" + spell + "'", null);
             cursor.moveToFirst();
             return cursor.getInt(0);
         }
 
-        public int getSpellDamage(String spell) {
+        public int getDamageByName(String spell) {
             Cursor cursor = mDb.rawQuery("SELECT damage FROM spells WHERE name=?", new String[] {spell});
             cursor.moveToFirst();
-            // Just for testing:
-            //return cursor.getInt(0);
-            return 0;
+            return cursor.getInt(0);
         }
 
+        public int getCastByName(String spell) {
+            //Log.wtf("Pocket Magic", "DB: " + spell);
+            Cursor cursor = mDb.rawQuery("SELECT cast FROM spells WHERE name='" + spell + "'", null);
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+
+        public int getDurationByName(String spell) {
+            Cursor cursor = mDb.rawQuery("SELECT duration FROM spells WHERE name=?", new String[] {spell});
+            cursor.moveToFirst()
+            return cursor.getInt(0);
+        }
+
+        public String getTypeByName(String spell) {
+            Cursor cursor = mDb.rawQuery("SELECT type FROM spells WHERE name='" + spell + "'", null);
+            cursor.moveToFirst();
+            return cursor.getString(0);
+        }
+
+        public String getTypeByID(int spellID) {
+            Cursor cursor = mDb.rawQuery("SELECT type FROM spells WHERE _id=" + String.valueOf(spellID), null);
+            cursor.moveToFirst();
+            return cursor.getString(0);
+        }
+
+        public int getHealingByName(String spell) {
+            Cursor cursor = mDb.rawQuery("SELECT healing FROM spells WHERE name='" + spell + "'", null);
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+
+        public int getHealingByID(int spellID) {
+            Cursor cursor = mDb.rawQuery("SELECT healing FROM spells WHERE _id=" + String.valueOf(spellID), null);
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
 
         public ArrayList<Spell> getAllSpells() {
             ArrayList<Spell> result = new ArrayList<Spell>();
