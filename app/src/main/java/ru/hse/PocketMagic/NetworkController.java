@@ -27,7 +27,7 @@ public class NetworkController {
     }
 
     public static void startGame() {
-        Intent intent = new Intent(currentActivity, GameActivity.class);
+        Intent intent = new Intent(currentActivity, LoadActivity.class);
         intent.putExtra("GameType", GameType.MULTIPLAYER);
         currentActivity.startActivity(intent);
         currentActivity.finish();

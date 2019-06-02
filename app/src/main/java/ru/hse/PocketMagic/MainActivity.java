@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 view.startAnimation(animSize);
-                Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                Intent intent = new Intent(MainActivity.this, LoadActivity.class);
                 intent.putExtra("GameType", GameType.BOT);
                 startActivity(intent);
                 finish();
