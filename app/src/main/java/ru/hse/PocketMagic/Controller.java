@@ -341,7 +341,7 @@ public class Controller {
 
         public int getCastByName(String spell) {
             //Log.wtf("Pocket Magic", "DB: " + spell);
-            Cursor cursor = mDb.rawQuery("SELECT cast FROM spells WHERE name='" + spell + "'", null);
+            Cursor cursor = mDb.rawQuery("SELECT \"cast\" FROM spells WHERE name='" + spell + "'", null);
             cursor.moveToFirst();
             return cursor.getInt(0);
         }
