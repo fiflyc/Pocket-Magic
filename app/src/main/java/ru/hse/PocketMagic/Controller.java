@@ -43,8 +43,6 @@ public class Controller {
         painter.setPlayerHP(logic.getPlayerHP());
         painter.setPlayerMP(logic.getPlayerMP());
         painter.setOpponentHP(logic.getOpponentHP());
-        painter.setPlayerState(PlayerState.WET);
-        painter.setPlayerState(PlayerState.WET);
         if (type == GameType.BOT) {
             painter.setOpponentName("Kappa, the Twitch meme");
             bot = new Bot();
