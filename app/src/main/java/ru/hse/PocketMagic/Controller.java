@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.log;
+import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! some useless methods in logic !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
@@ -286,8 +287,10 @@ public class Controller {
             //if (true) {//if (spell == "FireBall") {
             playerMP -= getCostByName(spell);
             playerHP += getHealingByName(spell);
+            playerHP = min(playerHP, MAX_HP);
             //if (target == Target.BODY) {
             opponentHP -= getDamageByName(spell);
+            opponentHP = max(opponentHP, 0);
             //}
             //}
         }
@@ -295,6 +298,7 @@ public class Controller {
         synchronized public void opponentSpell(String spell) {
             //painter.showOpponentSpell(spell);
             playerHP -= getDamageByName(spell); //5;
+            playerHP = max(playerHP, 0);
         }
 
         public String ableToThrowTheSpell(String spell, Target target) {
