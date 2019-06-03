@@ -43,6 +43,8 @@ public class Controller {
         painter.setPlayerHP(logic.getPlayerHP());
         painter.setPlayerMP(logic.getPlayerMP());
         painter.setOpponentHP(logic.getOpponentHP());
+        painter.setPlayerState(PlayerState.WET);
+        painter.setPlayerState(PlayerState.WET);
         if (type == GameType.BOT) {
             painter.setOpponentName("Kappa, the Twitch meme");
             bot = new Bot();
@@ -124,14 +126,15 @@ public class Controller {
 
     private void showPlayerCast(String spell) {
         String spellType = logic.getTypeByName(spell);
-        if (spellType == "spell") {
+        if (spellType.equals("spell")) {
+            Log.wtf("Pocket Magic", "Spell type is " + spellType);
             painter.showPlayerCast(spell);
         }
-        if (spellType == "buff") {
+        if (spellType.equals("buff")) {
             painter.showPlayerCast(spell);
             painter.setPlayerBuff(spell);
         }
-        if (spellType == "effect") {
+        if (spellType.equals("effect")) {
             painter.setOpponentState(logic.opponentState);
             painter.showPlayerCast(spell);
         }

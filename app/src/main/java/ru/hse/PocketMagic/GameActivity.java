@@ -243,7 +243,7 @@ public class GameActivity extends AppCompatActivity {
                         break;
                     case "Breeze":
                         breezeBackAnim = new GifDrawable(getContext().getResources(), R.drawable.breeze_back);
-                        breeze.setImageDrawable(breezeFrontAnim);
+                        breeze.setImageDrawable(breezeBackAnim);
 
                         breezeBackAnim.seekTo(0);
                         breezeBackAnim.setSpeed(2.0f);
@@ -260,7 +260,7 @@ public class GameActivity extends AppCompatActivity {
                         break;
                     case "ExhaustingSun":
                         exhaustingSunBackAnim = new GifDrawable(getContext().getResources(), R.drawable.exhausting_sun_back);
-                        opponentSun.setImageDrawable(exhaustingSunBackAnim);
+                        playerSun.setImageDrawable(exhaustingSunBackAnim);
 
                         exhaustingSunBackAnim.seekTo(0);
                         exhaustingSunBackAnim.setSpeed(2.0f);
@@ -314,7 +314,7 @@ public class GameActivity extends AppCompatActivity {
         public void showOpponentCast(String spell) {
             try {
                 switch (spell) {
-                    case "Fire Ball":
+                    case "FireBall":
                         fireBallFrontAnim = new GifDrawable(getContext().getResources(), R.drawable.fireball_front);
                         opponentCast.setImageDrawable(fireBallFrontAnim);
 
