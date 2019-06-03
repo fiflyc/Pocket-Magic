@@ -23,7 +23,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".LoadActivity"></activity>
+        <activity android:name=".LoadActivity" />
         <activity android:name=".OpponentSearchActivity" />
         <activity android:name=".GameResultsActivity" />
         <activity android:name=".GameActivity" />
