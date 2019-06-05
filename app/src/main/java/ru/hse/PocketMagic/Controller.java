@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -67,6 +68,8 @@ public class Controller {
         if (ability != "ok") {
             painter.sendNotification("Not enough mana");
             return;
+        } else {
+            logic.initializeCast(spell);
         }
         painter.lockInput();
         //painter.showPlayerCast(spell);
@@ -122,6 +125,13 @@ public class Controller {
         painter.unlockInput();
     }
 
+    private  void stopPlayerSpell(String spell) {
+        if (logic.getTypeByName(spell).equals("buff")) {
+            painter.hidePlayerBuff(spell);
+            logic.updatePlayerState("hide");
+        }
+    }
+
     private void showPlayerCast(String spell) {
         String spellType = logic.getTypeByName(spell);
         if (spellType.equals("spell")) {
@@ -138,28 +148,39 @@ public class Controller {
         }
     }
 
-    private class ThrowOpponentSpell extends AsyncTask<String, String, Void> {
+    private  void stopOpponentSpell(String spell) {
+        if (logic.getTypeByName(spell).equals("buff")) {
+            painter.hideOpponentBuff(spell);
+        }
+    }
+
+    private class ThrowOpponentSpell extends AsyncTask<String, String, String> {
         @Override
-        protected Void doInBackground(String... spells) {
+        protected String doInBackground(String... spells) {
             try {
                 TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             publishProgress(spells);
-            return null;
+            return spells[0];
         }
 
         @Override
         protected void onProgressUpdate(String... spells) {
             throwOpponentSpell(spells[0]);
         }
-    }
-
-    private class ThrowPlayerSpell extends AsyncTask<String, String, Void> {
 
         @Override
-        protected Void doInBackground(String... spells) {
+        protected void onPostExecute(String spell) {
+            stopOpponentSpell(spell);
+        }
+    }
+
+    private class ThrowPlayerSpell extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... spells) {
             try {
                 TimeUnit.SECONDS.sleep(logic.getCastByName(spells[0]));
             } catch (InterruptedException e) {
@@ -173,12 +194,17 @@ public class Controller {
                 }
                 publishProgress(spells);
             }
-            return null;
+            return spells[0];
         }
 
         @Override
         protected void onProgressUpdate(String... spells) {
             throwPlayerSpell(spells[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String spell) {
+            stopPlayerSpell(spell);
         }
     }
 
@@ -246,8 +272,8 @@ public class Controller {
         private DatabaseHelper mDBHelper;
         private SQLiteDatabase mDb;
 
-        private PlayerState playerState;
-        private PlayerState opponentState;
+        private PlayerState playerState = PlayerState.NORMAL;
+        private PlayerState opponentState = PlayerState.NORMAL;
 
         public Logic() {
             mDBHelper = new DatabaseHelper(painter.getContext());
@@ -283,23 +309,59 @@ public class Controller {
             return MAX_MP;
         }
 
+        synchronized public void initializeCast(String spell) {
+            playerMP -= getCostByName(spell);
+        }
+
         synchronized public void playerSpell(String spell) {
             //painter.showPlayerCast(spell);
             //if (true) {//if (spell == "FireBall") {
-            playerMP -= getCostByName(spell);
             playerHP += getHealingByName(spell);
             playerHP = min(playerHP, MAX_HP);
             //if (target == Target.BODY) {
             opponentHP -= getDamageByName(spell);
             opponentHP = max(opponentHP, 0);
+            updateOpponentState(spell);
             //}
             //}
         }
 
         synchronized public void opponentSpell(String spell) {
             //painter.showOpponentSpell(spell);
-            playerHP -= getDamageByName(spell); //5;
+            playerHP -= getDamageByName(spell);
             playerHP = max(playerHP, 0);
+            updatePlayerState(spell);
+        }
+
+        synchronized public void updatePlayerState(String spell) {
+            if (spell.equals("hide")) {
+                playerState = PlayerState.NORMAL;
+            }
+            if (playerState == PlayerState.SUNNY) {
+                return;
+            }
+            if (spell.equals("SunShield")) {
+                playerState = PlayerState.SUNNY;
+            }
+            if (spell.equals("Heal")) {
+                playerState = PlayerState.NORMAL;
+            }
+            if (playerState == PlayerState.NORMAL && spell.equals("Fog")) {
+                playerState = PlayerState.FOG;
+            }
+            if (playerState == PlayerState.FOG && spell.equals("Breeze")) {
+                playerState = PlayerState.WET;
+            }
+            if (playerState == PlayerState.WET && spell.equals("Freeze")) {
+                playerState = PlayerState.FROZEN;
+            }
+            if (playerState == PlayerState.FROZEN && spell.equals("FireBall")) {
+                playerState = PlayerState.FOG;
+            }
+        }
+
+        synchronized public void updateOpponentState(String spell) {
+
         }
 
         public String ableToThrowTheSpell(String spell, Target target) {
