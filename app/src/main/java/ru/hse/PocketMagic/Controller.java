@@ -129,6 +129,8 @@ public class Controller {
         if (logic.getTypeByName(spell).equals("buff")) {
             painter.hidePlayerBuff(spell);
             logic.updatePlayerState("hide");
+        } else  {
+            //painter.hidePlayerSpell(spell);
         }
     }
 
@@ -151,6 +153,8 @@ public class Controller {
     private  void stopOpponentSpell(String spell) {
         if (logic.getTypeByName(spell).equals("buff")) {
             painter.hideOpponentBuff(spell);
+        } else {
+            //painter.hideOpponentSpell(spell);
         }
     }
 
