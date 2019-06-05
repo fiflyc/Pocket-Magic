@@ -423,7 +423,7 @@ public class GameActivity extends AppCompatActivity {
 
         @Override
         public void cast(String spell) {
-            controller.playerSpell(spell, Target.BODY);
+            controller.playerSpell(spell);
         }
     }
 

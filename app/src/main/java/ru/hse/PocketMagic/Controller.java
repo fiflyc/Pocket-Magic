@@ -63,8 +63,8 @@ public class Controller {
         generation.stop();
     }
 
-    public void playerSpell(String spell, Target target) {
-        String ability = logic.ableToThrowTheSpell(spell, target);
+    public void playerSpell(String spell) {
+        String ability = logic.ableToThrowTheSpell(spell);
         if (ability != "ok") {
             painter.sendNotification("Not enough mana");
             return;
@@ -314,16 +314,12 @@ public class Controller {
         }
 
         synchronized public void playerSpell(String spell) {
-            //painter.showPlayerCast(spell);
-            //if (true) {//if (spell == "FireBall") {
             playerHP += getHealingByName(spell);
             playerHP = min(playerHP, MAX_HP);
-            //if (target == Target.BODY) {
             opponentHP -= getDamageByName(spell);
             opponentHP = max(opponentHP, 0);
             updateOpponentState(spell);
-            //}
-            //}
+
         }
 
         synchronized public void opponentSpell(String spell) {
@@ -364,14 +360,10 @@ public class Controller {
 
         }
 
-        public String ableToThrowTheSpell(String spell, Target target) {
+        public String ableToThrowTheSpell(String spell) {
             if (playerMP < getCostByName(spell) ) {
                 //return false;
                 return  ("Not enough mana for the spell " + spell);
-            }
-            if (target == Target.NOWHERE) {
-                playerMP -= getCostByName(spell);
-                return "Miss!";
             }
             return "ok";
         }
