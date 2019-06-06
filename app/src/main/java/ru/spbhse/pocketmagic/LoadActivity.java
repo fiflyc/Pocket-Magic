@@ -1,4 +1,4 @@
-package ru.hse.PocketMagic;
+package ru.spbhse.pocketmagic;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.WindowManager;
+
+import ru.spbhse.pocketmagic.R;
 
 public class LoadActivity extends AppCompatActivity {
 

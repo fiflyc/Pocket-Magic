@@ -1,4 +1,4 @@
-package ru.hse.PocketMagic;
+package ru.spbhse.pocketmagic;
 
 import android.database.Cursor;
 import android.database.SQLException;
@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 

@@ -1,8 +1,7 @@
-package ru.hse.PocketMagic;
+package ru.spbhse.pocketmagic;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +9,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import ru.spbhse.pocketmagic.R;
 
 public class GameResultsActivity extends AppCompatActivity {
 

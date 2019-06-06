@@ -1,4 +1,4 @@
-package ru.hse.PocketMagic;
+package ru.spbhse.pocketmagic;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
+import ru.spbhse.pocketmagic.R;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -62,7 +63,7 @@ public class GameActivity extends AppCompatActivity {
         void cast(String spell);
     }
 
-    private class Painter implements ru.hse.PocketMagic.Painter, Caster {
+    private class Painter implements ru.spbhse.pocketmagic.Painter, Caster {
 
         private GifDrawable breezeBackAnim;
         private GifDrawable breezeFrontAnim;

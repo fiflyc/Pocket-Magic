@@ -1,4 +1,4 @@
-package ru.hse.PocketMagic;
+package ru.spbhse.pocketmagic;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -11,6 +11,8 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+
+import ru.spbhse.pocketmagic.R;
 
 public class MainActivity extends AppCompatActivity {
 

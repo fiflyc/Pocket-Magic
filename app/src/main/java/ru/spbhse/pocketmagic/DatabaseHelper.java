@@ -1,4 +1,4 @@
-package ru.hse.PocketMagic;
+package ru.spbhse.pocketmagic;
 
 import android.content.Context;
 import android.database.SQLException;

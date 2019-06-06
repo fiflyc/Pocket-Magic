@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameResultsActivity">
+    tools:context="ru.spbhse.pocketmagic.GameResultsActivity">
 
     <ImageView
         android:id="@+id/pictureResult"
