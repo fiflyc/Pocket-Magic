@@ -52,5 +52,7 @@ public interface Painter {
 
     void unlockInput();
 
+    void timerCast(double time);
+
     Context getContext();
 }

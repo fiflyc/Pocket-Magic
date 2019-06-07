@@ -7,6 +7,7 @@ import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.TimerTask;
 
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
@@ -57,6 +59,8 @@ public class GameActivity extends AppCompatActivity {
     private GifImageView opponentSun;
 
     private GestureOverlayView gestureOverlayView;
+
+    private TextView timer;
 
     public interface Caster {
 
@@ -161,8 +165,6 @@ public class GameActivity extends AppCompatActivity {
                 opponentBuffB.setVisibility(View.INVISIBLE);
             } else if (buff.equals("SunShield")) {
                 opponentBuffA.setVisibility(View.INVISIBLE);
-            } else if (buff.equals("SunShieldB")) {
-                opponentBuffA.setVisibility(View.INVISIBLE);
             }
         }
 
@@ -183,11 +185,9 @@ public class GameActivity extends AppCompatActivity {
         @Override
         public void hidePlayerBuff(String buff) {
             if (buff.equals("Heal")) {
-                opponentBuffB.setVisibility(View.INVISIBLE);
+                playerBuffB.setVisibility(View.INVISIBLE);
             } else if (buff.equals("SunShield")) {
-                opponentBuffA.setVisibility(View.INVISIBLE);
-            } else if (buff.equals("SunShieldB")) {
-                opponentBuffA.setVisibility(View.INVISIBLE);
+                playerBuffA.setVisibility(View.INVISIBLE);
             }
         }
 
@@ -417,6 +417,20 @@ public class GameActivity extends AppCompatActivity {
         public void unlockInput() {
             gestureOverlayView.setVisibility(View.VISIBLE);
         }
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+        @Override
+        public void timerCast(double time) {
+            new CountDownTimer((long) (time * 1000), 100) {
+                public void onTick(long millisUntilFinished) {
+                    //timer.setText("cast time: " + millisUntilFinished / 1000 + ":" + millisUntilFinished / 100);
+                    opponentName.setText("cast time: " + millisUntilFinished / 1000 + ":" + millisUntilFinished / 100);
+                }
+                public void onFinish() {
+                    //timer.setText("");
+                    opponentName.setText("");
+                }
+            }.start();
+        }
 
         public Context getContext() {
             return GameActivity.this;
@@ -451,6 +465,8 @@ public class GameActivity extends AppCompatActivity {
         opponentName = findViewById(R.id.opponentName);
         opponentSpell = findViewById(R.id.opponentSpell);
         opponentAvatar = findViewById(R.id.opponentAvatar);
+
+        timer = findViewById(R.id.timer);
 
         playerBuffA = findViewById(R.id.playerBuffA);
         playerBuffB = findViewById(R.id.playerBuffB);

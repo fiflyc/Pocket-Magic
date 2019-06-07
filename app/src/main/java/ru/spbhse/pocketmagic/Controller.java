@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -72,6 +73,7 @@ public class Controller {
             logic.initializeCast(spell);
         }
         painter.lockInput();
+        painter.timerCast(logic.getCastByName(spell));
         if (type == GameType.MULTIPLAYER) {
             NetworkController.sendSpell(logic.getIDByName(spell));
         }
@@ -80,6 +82,9 @@ public class Controller {
     }
 
     public void opponentSpell(int spellID) {
+        if (isStopped) {
+            return;
+        }
         painter.sendNotification(logic.getNameById(spellID));
         painter.showOpponentSpell(logic.getNameById(spellID));
         ThrowOpponentSpell throwOpponentSpell = new ThrowOpponentSpell();
@@ -96,7 +101,7 @@ public class Controller {
             return;
         }
         painter.hideOpponentSpell();
-        painter.showOpponentCast("FireBall");
+        painter.showOpponentCast(spell);
         logic.opponentSpell(spell);
         painter.setPlayerHP(logic.getPlayerHP());
         painter.sendNotification("You've got a damage!");
@@ -127,7 +132,7 @@ public class Controller {
             painter.hidePlayerBuff(spell);
             logic.updatePlayerState("hide");
         } else  {
-            painter.hidePlayerCast(spell);
+            //painter.hidePlayerCast(spell);
         }
     }
 
@@ -151,7 +156,7 @@ public class Controller {
         if (logic.getTypeByName(spell).equals("buff")) {
             painter.hideOpponentBuff(spell);
         } else {
-            painter.hideOpponentCast(spell);
+           // painter.hideOpponentCast(spell);
         }
     }
 
@@ -183,7 +188,7 @@ public class Controller {
         @Override
         protected String doInBackground(String... spells) {
             try {
-                TimeUnit.SECONDS.sleep(logic.getCastByName(spells[0]));
+                TimeUnit.MILLISECONDS.sleep((long) (logic.getCastByName(spells[0]) * 1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -221,7 +226,7 @@ public class Controller {
         protected Void doInBackground(Void... voids) {
             while (isAlive) {
                 try {
-                    TimeUnit.SECONDS.sleep(random.nextInt(5) + 3);
+                    TimeUnit.SECONDS.sleep(random.nextInt(5) + 5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -429,16 +434,16 @@ public class Controller {
             return cursor.getInt(0);
         }
 
-        public int getCastByName(String spell) {
+        public double getCastByName(String spell) {
             Cursor cursor = mDb.rawQuery("SELECT \"cast\" FROM spells WHERE name='" + spell + "'", null);
             cursor.moveToFirst();
-            return cursor.getInt(0);
+            return cursor.getDouble(0);
         }
 
-        public int getDurationByName(String spell) {
+        public double getDurationByName(String spell) {
             Cursor cursor = mDb.rawQuery("SELECT duration FROM spells WHERE name=?", new String[] {spell});
             cursor.moveToFirst();
-            return cursor.getInt(0);
+            return cursor.getDouble(0);
         }
 
         public String getTypeByName(String spell) {
@@ -459,7 +464,7 @@ public class Controller {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 result.add( new Spell( cursor.getString(1), cursor.getInt(2),
-                        cursor.getInt(3), cursor.getInt(4), cursor.getInt(5),
+                        cursor.getInt(3), cursor.getDouble(4), cursor.getDouble(5),
                         cursor.getString(6), cursor.getInt(7), cursor.getString(8)) );
                 cursor.moveToNext();
             }

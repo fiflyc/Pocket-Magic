@@ -4,13 +4,13 @@ public class Spell {
     private String name;
     private int cost;
     private int damage;
-    private int cast;
-    private int duration;
+    private double cast;
+    private double duration;
     private String type;
     private int healing;
     private String description;
 
-    public Spell(String name, int cost, int damage, int cast, int duration, String type, int healing, String description) {
+    public Spell(String name, int cost, int damage, double cast, double duration, String type, int healing, String description) {
         this.name = name;
         this.cost = cost;
         this.damage = damage;
