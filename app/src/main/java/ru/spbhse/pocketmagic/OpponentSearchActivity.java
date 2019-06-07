@@ -12,24 +12,31 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.Player;
+import com.google.android.gms.games.RealTimeMultiplayerClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-
-import ru.spbhse.pocketmagic.R;
 
 public class OpponentSearchActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 42;
-    private GoogleSignInAccount account;
-    private GoogleSignInClient client;
+    private static final int RC_REQUEST_PERMISSIONS_SUCCESS = 1000;
+
+    private GoogleSignInOptions signInOptions;
+    private GoogleSignInAccount googleAccount;
+    private GoogleSignInClient googleClient;
+    private RealTimeMultiplayerClient multiplayerClient;
+
+    private String playerId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,34 +55,35 @@ public class OpponentSearchActivity extends AppCompatActivity {
             }
         });
 
-        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+                .requestScopes(Games.SCOPE_GAMES_LITE)
+                .requestScopes(Games.SCOPE_GAMES)
+                .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail()
                 .build();
 
-        client = GoogleSignIn.getClient(this, options);
+        googleClient = GoogleSignIn.getClient(this, signInOptions);
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        account = GoogleSignIn.getLastSignedInAccount(this);
-        if (account == null) {
-            signIn();
-        }
-
-        if (account == null) {
-            new AlertDialog.Builder(this)
-                    .setMessage("Error while sign-in in your Google Play Account")
-                    .setCancelable(false)
-                    .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(OpponentSearchActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }).show();
+        googleAccount = GoogleSignIn.getLastSignedInAccount(this);
+        if (googleAccount == null) {
+            Log.wtf("Pocket Magic", "Need sign in");
+            startActivityForResult(googleClient.getSignInIntent(), RC_SIGN_IN);
+        } else if (GoogleSignIn.hasPermissions(googleAccount, signInOptions.getScopeArray())) {
+            Log.wtf("Pocket Magic", "not enough permissions");
+            GoogleSignIn.requestPermissions(
+                    this,
+                    RC_REQUEST_PERMISSIONS_SUCCESS,
+                    googleAccount,
+                    signInOptions.getScopeArray()
+                );
+        } else {
+            Log.wtf("Pocket Magic", "Get account");
+            onConnected();
         }
     }
 
@@ -85,20 +93,57 @@ public class OpponentSearchActivity extends AppCompatActivity {
 
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
+            try {
+                googleAccount = task.getResult(ApiException.class);
+                onConnected();
+            } catch (ApiException e) {
+                String message = e.getMessage();
+                if (message == null) {
+                    showError("Error while sign in Google Play");
+                } else {
+                    showError("Google API error " + CommonStatusCodes.getStatusCodeString(e.getStatusCode()));
+                }
+            }
+        } else if (requestCode == RC_REQUEST_PERMISSIONS_SUCCESS) {
+            Log.wtf("Pocket Magic", "Now got all permissions");
+            onConnected();
         }
     }
 
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            account = completedTask.getResult(ApiException.class);
-        } catch (ApiException e) {
-            Log.w("Pocket Magic", "signInResult:failed code=" + e.getStatusCode());
+    private void onConnected() {
+        Log.wtf("Pocket Magic", "Connected to Google APIs");
+        if (googleAccount != null) {
+            multiplayerClient = Games.getRealTimeMultiplayerClient(this, googleAccount);
+
+            Games
+                    .getPlayersClient(this, googleAccount)
+                    .getCurrentPlayer()
+                    .addOnSuccessListener(new OnSuccessListener<Player>() {
+                        @Override
+                        public void onSuccess(Player player) {
+                            playerId = player.getPlayerId();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            showError("Can't get your player ID");
+                        }
+                    });
         }
     }
 
-    private void signIn() {
-        Intent signInIntent = client.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+    private void showError(String message) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setCancelable(false)
+                .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(OpponentSearchActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }).show();
     }
 }
