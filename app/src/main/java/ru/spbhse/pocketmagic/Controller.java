@@ -15,8 +15,6 @@ import java.util.concurrent.TimeUnit;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! some useless methods in logic !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
 public class Controller {
     /* inner logic of the game */
     private Logic logic;
@@ -74,8 +72,6 @@ public class Controller {
             logic.initializeCast(spell);
         }
         painter.lockInput();
-        //painter.showPlayerCast(spell);
-        //throwPlayerSpell(spell);
         if (type == GameType.MULTIPLAYER) {
             NetworkController.sendSpell(logic.getIDByName(spell));
         }
@@ -114,7 +110,6 @@ public class Controller {
         if (isStopped) {
             return;
         }
-        //painter.hidePlayerCast();
         showPlayerCast(spell);
         logic.playerSpell(spell);
         painter.setPlayerMP(logic.getPlayerMP());
@@ -357,7 +352,6 @@ public class Controller {
         }
 
         synchronized public void opponentSpell(String spell) {
-            //painter.showOpponentSpell(spell);
             playerHP -= calcPlayerDamage(spell);
             playerHP = max(playerHP, 0);
             updatePlayerState(spell);
@@ -401,7 +395,6 @@ public class Controller {
                 return "You can't cast ExhaustingSun through the fog";
             }
             if (playerMP < getCostByName(spell) ) {
-                //return false;
                 return ("Not enough mana for the spell " + spell);
             }
             return "ok";
@@ -425,7 +418,6 @@ public class Controller {
         }
 
         public int getCostByName(String spell) {
-            //Log.wtf("Pocket Magic", "DB: " + spell);
             Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='" + spell + "'", null);
             cursor.moveToFirst();
             return cursor.getInt(0);
@@ -438,7 +430,6 @@ public class Controller {
         }
 
         public int getCastByName(String spell) {
-            //Log.wtf("Pocket Magic", "DB: " + spell);
             Cursor cursor = mDb.rawQuery("SELECT \"cast\" FROM spells WHERE name='" + spell + "'", null);
             cursor.moveToFirst();
             return cursor.getInt(0);
@@ -456,20 +447,8 @@ public class Controller {
             return cursor.getString(0);
         }
 
-        public String getTypeByID(int spellID) {
-            Cursor cursor = mDb.rawQuery("SELECT type FROM spells WHERE _id=" + String.valueOf(spellID), null);
-            cursor.moveToFirst();
-            return cursor.getString(0);
-        }
-
         public int getHealingByName(String spell) {
             Cursor cursor = mDb.rawQuery("SELECT healing FROM spells WHERE name='" + spell + "'", null);
-            cursor.moveToFirst();
-            return cursor.getInt(0);
-        }
-
-        public int getHealingByID(int spellID) {
-            Cursor cursor = mDb.rawQuery("SELECT healing FROM spells WHERE _id=" + String.valueOf(spellID), null);
             cursor.moveToFirst();
             return cursor.getInt(0);
         }
