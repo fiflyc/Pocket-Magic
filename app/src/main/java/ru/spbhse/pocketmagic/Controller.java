@@ -9,6 +9,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.max;
@@ -31,6 +32,7 @@ public class Controller {
     private boolean isStopped = false;
 
     private GameType type;
+    private Random random;
 
     /**  */
 
@@ -38,6 +40,7 @@ public class Controller {
         this.painter = painter;
         this.type = type;
         logic = new Logic();
+        random = new Random();
         painter.setMaxHP(logic.getMaxHp());
         painter.setMaxMP(logic.getMaxMp());
         painter.setPlayerHP(logic.getPlayerHP());
@@ -223,7 +226,7 @@ public class Controller {
         protected Void doInBackground(Void... voids) {
             while (isAlive) {
                 try {
-                    TimeUnit.SECONDS.sleep(10);
+                    TimeUnit.SECONDS.sleep(random.nextInt(5) + 3);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -234,7 +237,7 @@ public class Controller {
 
         @Override
         protected void onProgressUpdate(Void... voids) {
-            opponentSpell(7);
+            opponentSpell(random.nextInt(7) + 1);
         }
     }
 
