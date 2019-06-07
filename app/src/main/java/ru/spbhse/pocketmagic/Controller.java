@@ -9,12 +9,11 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-
-/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! some useless methods in logic !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 public class Controller {
     /* inner logic of the game */
@@ -31,6 +30,7 @@ public class Controller {
     private boolean isStopped = false;
 
     private GameType type;
+    private Random random;
 
     /**  */
 
@@ -38,6 +38,7 @@ public class Controller {
         this.painter = painter;
         this.type = type;
         logic = new Logic();
+        random = new Random();
         painter.setMaxHP(logic.getMaxHp());
         painter.setMaxMP(logic.getMaxMp());
         painter.setPlayerHP(logic.getPlayerHP());
@@ -65,14 +66,12 @@ public class Controller {
     public void playerSpell(String spell) {
         String ability = logic.ableToThrowTheSpell(spell);
         if (ability != "ok") {
-            painter.sendNotification("Not enough mana");
+            painter.sendNotification(ability);
             return;
         } else {
             logic.initializeCast(spell);
         }
         painter.lockInput();
-        //painter.showPlayerCast(spell);
-        //throwPlayerSpell(spell);
         if (type == GameType.MULTIPLAYER) {
             NetworkController.sendSpell(logic.getIDByName(spell));
         }
@@ -111,7 +110,6 @@ public class Controller {
         if (isStopped) {
             return;
         }
-        //painter.hidePlayerCast();
         showPlayerCast(spell);
         logic.playerSpell(spell);
         painter.setPlayerMP(logic.getPlayerMP());
@@ -129,7 +127,7 @@ public class Controller {
             painter.hidePlayerBuff(spell);
             logic.updatePlayerState("hide");
         } else  {
-            //painter.hidePlayerSpell(spell);
+            painter.hidePlayerCast(spell);
         }
     }
 
@@ -153,7 +151,7 @@ public class Controller {
         if (logic.getTypeByName(spell).equals("buff")) {
             painter.hideOpponentBuff(spell);
         } else {
-            //painter.hideOpponentSpell(spell);
+            painter.hideOpponentCast(spell);
         }
     }
 
@@ -223,7 +221,7 @@ public class Controller {
         protected Void doInBackground(Void... voids) {
             while (isAlive) {
                 try {
-                    TimeUnit.SECONDS.sleep(10);
+                    TimeUnit.SECONDS.sleep(random.nextInt(5) + 3);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -234,7 +232,7 @@ public class Controller {
 
         @Override
         protected void onProgressUpdate(Void... voids) {
-            opponentSpell(7);
+            opponentSpell(random.nextInt(7) + 1);
         }
     }
 
@@ -267,6 +265,7 @@ public class Controller {
     private class Logic {
         private static final int MAX_HP = 20;
         private static final int MAX_MP = 20;
+        private static final int SPELL_LENS = 3;
 
         volatile private int playerHP = MAX_HP ;
         volatile private int opponentHP = MAX_HP;
@@ -314,20 +313,46 @@ public class Controller {
 
         synchronized public void initializeCast(String spell) {
             playerMP -= getCostByName(spell);
+            playerMP = max(0, playerMP);
         }
 
         synchronized public void playerSpell(String spell) {
             playerHP += getHealingByName(spell);
             playerHP = min(playerHP, MAX_HP);
-            opponentHP -= getDamageByName(spell);
+            opponentHP -= calcOpponentDamage(spell);
             opponentHP = max(opponentHP, 0);
             updateOpponentState(spell);
+        }
+        public void stopPlayerSpell(String spell) {
+            if (spell.equals("SunShield")) {
+                playerState = PlayerState.NORMAL;
+            }
+        }
 
+        public int calcPlayerDamage(String spell) {
+            int result = getDamageByName(spell);
+            if (playerState == PlayerState.WET && spell.equals("Lightning")) {
+                result = result * SPELL_LENS;
+            }
+            if ((playerState == PlayerState.FREEZING || playerState == PlayerState.FROZEN) && (spell.equals("Breeze"))) {
+                result = SPELL_LENS;
+            }
+            return result;
+        }
+
+        public int calcOpponentDamage(String spell) {
+            int result = getDamageByName(spell);
+            if (opponentState == PlayerState.WET && spell.equals("Lightning")) {
+                result = result * SPELL_LENS;
+            }
+            if ((opponentState == PlayerState.FREEZING || opponentState == PlayerState.FROZEN) && (spell.equals("Breeze"))) {
+                result = SPELL_LENS;
+            }
+            return result;
         }
 
         synchronized public void opponentSpell(String spell) {
-            //painter.showOpponentSpell(spell);
-            playerHP -= getDamageByName(spell);
+            playerHP -= calcPlayerDamage(spell);
             playerHP = max(playerHP, 0);
             updatePlayerState(spell);
         }
@@ -351,11 +376,13 @@ public class Controller {
             if (playerState == PlayerState.FOG && spell.equals("Breeze")) {
                 playerState = PlayerState.WET;
             }
-            if (playerState == PlayerState.WET && spell.equals("Freeze")) {
-                playerState = PlayerState.FROZEN;
-            }
             if (playerState == PlayerState.FROZEN && spell.equals("FireBall")) {
                 playerState = PlayerState.FOG;
+            }
+            if (playerState == PlayerState.WET && spell.equals("Freeze")) {
+                playerState = PlayerState.FROZEN;
+            } else {
+                playerState = PlayerState.FREEZING;
             }
         }
 
@@ -364,9 +391,11 @@ public class Controller {
         }
 
         public String ableToThrowTheSpell(String spell) {
+            if (spell.equals("ExhaustingSun") && playerState.equals(PlayerState.FOG)) {
+                return "You can't cast ExhaustingSun through the fog";
+            }
             if (playerMP < getCostByName(spell) ) {
-                //return false;
-                return  ("Not enough mana for the spell " + spell);
+                return ("Not enough mana for the spell " + spell);
             }
             return "ok";
         }
@@ -389,7 +418,6 @@ public class Controller {
         }
 
         public int getCostByName(String spell) {
-            //Log.wtf("Pocket Magic", "DB: " + spell);
             Cursor cursor = mDb.rawQuery("SELECT cost FROM spells WHERE name='" + spell + "'", null);
             cursor.moveToFirst();
             return cursor.getInt(0);
@@ -402,7 +430,6 @@ public class Controller {
         }
 
         public int getCastByName(String spell) {
-            //Log.wtf("Pocket Magic", "DB: " + spell);
             Cursor cursor = mDb.rawQuery("SELECT \"cast\" FROM spells WHERE name='" + spell + "'", null);
             cursor.moveToFirst();
             return cursor.getInt(0);
@@ -420,20 +447,8 @@ public class Controller {
             return cursor.getString(0);
         }
 
-        public String getTypeByID(int spellID) {
-            Cursor cursor = mDb.rawQuery("SELECT type FROM spells WHERE _id=" + String.valueOf(spellID), null);
-            cursor.moveToFirst();
-            return cursor.getString(0);
-        }
-
         public int getHealingByName(String spell) {
             Cursor cursor = mDb.rawQuery("SELECT healing FROM spells WHERE name='" + spell + "'", null);
-            cursor.moveToFirst();
-            return cursor.getInt(0);
-        }
-
-        public int getHealingByID(int spellID) {
-            Cursor cursor = mDb.rawQuery("SELECT healing FROM spells WHERE _id=" + String.valueOf(spellID), null);
             cursor.moveToFirst();
             return cursor.getInt(0);
         }

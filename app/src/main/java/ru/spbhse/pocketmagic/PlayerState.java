@@ -4,6 +4,7 @@ public enum PlayerState {
     NORMAL,
     FOG,
     FROZEN,
+    FREEZING,
     WET,
     SUNNY
 }
