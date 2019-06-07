@@ -68,7 +68,7 @@ public class Controller {
     public void playerSpell(String spell) {
         String ability = logic.ableToThrowTheSpell(spell);
         if (ability != "ok") {
-            painter.sendNotification("Not enough mana");
+            painter.sendNotification(ability);
             return;
         } else {
             logic.initializeCast(spell);
@@ -132,7 +132,7 @@ public class Controller {
             painter.hidePlayerBuff(spell);
             logic.updatePlayerState("hide");
         } else  {
-            //painter.hidePlayerSpell(spell);
+            painter.hidePlayerCast(spell);
         }
     }
 
@@ -156,7 +156,7 @@ public class Controller {
         if (logic.getTypeByName(spell).equals("buff")) {
             painter.hideOpponentBuff(spell);
         } else {
-            //painter.hideOpponentSpell(spell);
+            painter.hideOpponentCast(spell);
         }
     }
 
@@ -270,6 +270,7 @@ public class Controller {
     private class Logic {
         private static final int MAX_HP = 20;
         private static final int MAX_MP = 20;
+        private static final int SPELL_LENS = 3;
 
         volatile private int playerHP = MAX_HP ;
         volatile private int opponentHP = MAX_HP;
@@ -317,20 +318,47 @@ public class Controller {
 
         synchronized public void initializeCast(String spell) {
             playerMP -= getCostByName(spell);
+            playerMP = max(0, playerMP);
         }
 
         synchronized public void playerSpell(String spell) {
             playerHP += getHealingByName(spell);
             playerHP = min(playerHP, MAX_HP);
-            opponentHP -= getDamageByName(spell);
+            opponentHP -= calcOpponentDamage(spell);
             opponentHP = max(opponentHP, 0);
             updateOpponentState(spell);
+        }
+        public void stopPlayerSpell(String spell) {
+            if (spell.equals("SunShield")) {
+                playerState = PlayerState.NORMAL;
+            }
+        }
 
+        public int calcPlayerDamage(String spell) {
+            int result = getDamageByName(spell);
+            if (playerState == PlayerState.WET && spell.equals("Lightning")) {
+                result = result * SPELL_LENS;
+            }
+            if ((playerState == PlayerState.FREEZING || playerState == PlayerState.FROZEN) && (spell.equals("Breeze"))) {
+                result = SPELL_LENS;
+            }
+            return result;
+        }
+
+        public int calcOpponentDamage(String spell) {
+            int result = getDamageByName(spell);
+            if (opponentState == PlayerState.WET && spell.equals("Lightning")) {
+                result = result * SPELL_LENS;
+            }
+            if ((opponentState == PlayerState.FREEZING || opponentState == PlayerState.FROZEN) && (spell.equals("Breeze"))) {
+                result = SPELL_LENS;
+            }
+            return result;
         }
 
         synchronized public void opponentSpell(String spell) {
             //painter.showOpponentSpell(spell);
-            playerHP -= getDamageByName(spell);
+            playerHP -= calcPlayerDamage(spell);
             playerHP = max(playerHP, 0);
             updatePlayerState(spell);
         }
@@ -354,11 +382,13 @@ public class Controller {
             if (playerState == PlayerState.FOG && spell.equals("Breeze")) {
                 playerState = PlayerState.WET;
             }
-            if (playerState == PlayerState.WET && spell.equals("Freeze")) {
-                playerState = PlayerState.FROZEN;
-            }
             if (playerState == PlayerState.FROZEN && spell.equals("FireBall")) {
                 playerState = PlayerState.FOG;
+            }
+            if (playerState == PlayerState.WET && spell.equals("Freeze")) {
+                playerState = PlayerState.FROZEN;
+            } else {
+                playerState = PlayerState.FREEZING;
             }
         }
 
@@ -367,9 +397,12 @@ public class Controller {
         }
 
         public String ableToThrowTheSpell(String spell) {
+            if (spell.equals("ExhaustingSun") && playerState.equals(PlayerState.FOG)) {
+                return "You can't cast ExhaustingSun through the fog";
+            }
             if (playerMP < getCostByName(spell) ) {
                 //return false;
-                return  ("Not enough mana for the spell " + spell);
+                return ("Not enough mana for the spell " + spell);
             }
             return "ok";
         }
