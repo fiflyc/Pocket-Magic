@@ -63,6 +63,20 @@ public class OpponentSearchActivity extends AppCompatActivity {
         if (account == null) {
             signIn();
         }
+
+        if (account == null) {
+            new AlertDialog.Builder(this)
+                    .setMessage("Error while sign-in in your Google Play Account")
+                    .setCancelable(false)
+                    .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(OpponentSearchActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }).show();
+        }
     }
 
     @Override
