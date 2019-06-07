@@ -1,5 +1,6 @@
 package ru.spbhse.pocketmagic;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -140,7 +141,7 @@ public class Network {
                 return;
             }
 
-            Games.getPlayersClient(NetworkController.getContext(), googleAccount)
+            Games.getPlayersClient(NetworkController.getContext(), account)
                     .getCurrentPlayerId()
                     .addOnSuccessListener(new OnSuccessListener<String>() {
                         @Override
@@ -155,14 +156,34 @@ public class Network {
 
     private RoomConfig roomConfig;
     private Room room;
-    private GoogleSignInAccount googleAccount;
-    private RealTimeMultiplayerClient multiplayerClient;
+    private GoogleSignInAccount account;
+    private RealTimeMultiplayerClient client;
     private String playerID;
+
+    public Network(GoogleSignInAccount account) {
+        this.account = account;
+        client = Games.getRealTimeMultiplayerClient(NetworkController.getContext(),
+                this.account);
+    }
+
+    public void findAndStartGame() {
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
+
+        roomConfig = RoomConfig.builder(this.new CallbackUpdater())
+                .setOnMessageReceivedListener(this.new MessageListener())
+                .setRoomStatusUpdateCallback(this.new CallbackHandler())
+                .setAutoMatchCriteria(autoMatchCriteria)
+                .build();
+
+        Log.wtf("Pocket Magic", "Prepared for creating a room");
+        client.create(roomConfig);
+        Log.wtf("Pocket Magic", "Room created");
+    }
 
     public void leaveRoom() {
         if (room != null) {
             Games.getRealTimeMultiplayerClient(NetworkController.getContext(),
-                    googleAccount).leave(roomConfig, room.getRoomId());
+                    account).leave(roomConfig, room.getRoomId());
             room = null;
         }
     }
@@ -174,8 +195,8 @@ public class Network {
         }
 
         for (String id: room.getParticipantIds()) {
-            if (id != playerID) {
-                multiplayerClient.sendReliableMessage(
+            if (!id.equals(playerID)) {
+                client.sendReliableMessage(
                         message, room.getRoomId(),
                         id,
                         new RealTimeMultiplayerClient.ReliableMessageSentCallback() {

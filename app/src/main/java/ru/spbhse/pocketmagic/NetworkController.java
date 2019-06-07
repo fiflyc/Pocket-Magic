@@ -1,8 +1,12 @@
 package ru.spbhse.pocketmagic;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.nio.ByteBuffer;
 
@@ -12,17 +16,8 @@ public class NetworkController {
     private static Controller currentController;
     private static Network network;
 
-    public static final int FIRE_BALL = 1;
-    public static final int FREEZE = 2;
-    public static final int LIGHTNING = 3;
-    public static final int FOG = 4;
-    public static final int HEAL = 5;
-    public static final int BREEZE = 6;
-    public static final int SUN_SHIELD = 7;
-    public static final int EXHAUSTING_SUN = 8;
-
-    public static Network createNetwork() {
-        network = new Network();
+    public static Network createNetwork(GoogleSignInAccount account) {
+        network = new Network(account);
         return network;
     }
 
@@ -53,66 +48,24 @@ public class NetworkController {
     }
 
     public static void receiveSpell(int spellID) {
-        /*switch (spellID) {
-            case FIRE_BALL:
-                currentController.opponentSpell("FireBall");
-                break;
-            case FREEZE:
-                currentController.opponentSpell("Freeze");
-                break;
-            case LIGHTNING:
-                currentController.opponentSpell("Lightning");
-                break;
-            case FOG:
-                currentController.opponentSpell("Fog");
-                break;
-            case HEAL:
-                currentController.opponentSpell("Heal");
-                break;
-            case BREEZE:
-                currentController.opponentSpell("Breeze");
-                break;
-            case SUN_SHIELD:
-                currentController.opponentSpell("SunShield");
-                break;
-            case EXHAUSTING_SUN:
-                currentController.opponentSpell("ExhaustingSun");
-                break;
-        }
-        */
         currentController.opponentSpell(spellID);
     }
 
     public static void sendSpell(int spellID) {
-        /*
-        switch (spell) {
-            case "FireBall":
-                network.sendMessage(ByteBuffer.allocate(4).putInt(FIRE_BALL).array());
-                break;
-            case "Freeze":
-                network.sendMessage(ByteBuffer.allocate(4).putInt(FREEZE).array());
-                break;
-            case "Lightning":
-                network.sendMessage(ByteBuffer.allocate(4).putInt(LIGHTNING).array());
-                break;
-            case "Fog":
-                network.sendMessage(ByteBuffer.allocate(4).putInt(FOG).array());
-                break;
-            case "Heal":
-                network.sendMessage(ByteBuffer.allocate(4).putInt(HEAL).array());
-                break;
-            case "Breeze":
-                network.sendMessage(ByteBuffer.allocate(4).putInt(BREEZE).array());
-                break;
-            case "SunShield":
-                network.sendMessage(ByteBuffer.allocate(4).putInt(SUN_SHIELD).array());
-                break;
-            case "ExhaustingSun":
-                network.sendMessage(ByteBuffer.allocate(4).putInt(EXHAUSTING_SUN).array());
-                break;
-        }
-        */
         network.sendMessage(ByteBuffer.allocate(4).putInt(spellID).array());
     }
 
+    public static void showAlert(String message) {
+        new AlertDialog.Builder(currentActivity)
+                .setMessage(message)
+                .setCancelable(false)
+                .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(currentActivity, MainActivity.class);
+                        currentActivity.startActivity(intent);
+                        currentActivity.finish();
+                    }
+                }).show();
+    }
 }
