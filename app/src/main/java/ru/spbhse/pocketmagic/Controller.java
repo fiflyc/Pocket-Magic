@@ -4,42 +4,41 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+/** Controller -- carries out communication between UI, Network and Game Logic */
 public class Controller {
     /* inner logic of the game */
     private Logic logic;
-    private Bot bot;
 
     /* Parent painter */
     private Painter painter;
     /* Special AsyncTask for increasing playerMP every x seconds */
     private ManaGenerator generation;
     /* there are 3 cases when the game should be stopped
-    theEnd == true iff one of them happened
-    uses for communication between theese 3 cases () */
+    isStopped == true iff one of them happened */
     private boolean isStopped = false;
 
+    /* Bot ot Multiplayer */
     private GameType type;
-    private Random random;
+    private Bot bot;
 
-    /**  */
-
+    /** Creates Controller and starts the game with given type of game and Painter -- UI entity */
     public Controller(Painter painter, GameType type) {
         this.painter = painter;
         this.type = type;
         logic = new Logic();
-        random = new Random();
+        startGame();
+    }
+
+    private void startGame() {
         painter.setMaxHP(logic.getMaxHp());
         painter.setMaxMP(logic.getMaxMp());
         painter.setPlayerHP(logic.getPlayerHP());
@@ -50,7 +49,6 @@ public class Controller {
             bot = new Bot();
             bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
-            //painter.setOpponentName("Your opponent");
             painter.setOpponentName(NetworkController.getOpponentName());
         }
         generation = new ManaGenerator();
@@ -65,6 +63,7 @@ public class Controller {
         generation.stop();
     }
 
+    /** Method activating spell from the player. */
     public void playerSpell(String spell) {
         String ability = logic.ableToThrowTheSpell(spell);
         if (ability != "ok") {
@@ -82,6 +81,7 @@ public class Controller {
         throwPlayerSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, spell);
     }
 
+    /** Method activating spell from the opponent. */
     public void opponentSpell(int spellID) {
         if (isStopped) {
             return;
@@ -96,12 +96,12 @@ public class Controller {
         painter.setPlayerMP(logic.getPlayerMP());
     }
 
+    /** Part of the opponent spell after cast. */
     private void throwOpponentSpell(String spell) {
         if (isStopped) {
             return;
         }
         painter.hideOpponentSpell();
-        //painter.showOpponentCast(spell);
         showOpponentCast(spell);
         logic.opponentSpell(spell);
         painter.setPlayerHP(logic.getPlayerHP());
@@ -110,7 +110,7 @@ public class Controller {
             painter.endGame(GameResult.LOSE);
         }
     }
-
+    /** Part of the player spell after cast. */
     private void throwPlayerSpell(String spell) {
         painter.unlockInput();
         if (isStopped) {
@@ -127,6 +127,7 @@ public class Controller {
         }
     }
 
+    /** Part of the player spell after cast and throwing. */
     private  void stopPlayerSpell(String spell) {
         if (logic.getTypeByName(spell).equals("buff")) {
             painter.hidePlayerBuff(spell);
@@ -139,6 +140,7 @@ public class Controller {
         painter.setOpponentState(logic.opponentState);
     }
 
+    /**  */
     private void showPlayerCast(String spell) {
         painter.setOpponentState(logic.opponentState);
         String spellType = logic.getTypeByName(spell);
@@ -238,6 +240,7 @@ public class Controller {
 
     private class Bot extends AsyncTask<Void, Void, Void> {
         private boolean isAlive = true;
+        private Random random = new Random();
 
         public void stop(){
             isAlive = false;
