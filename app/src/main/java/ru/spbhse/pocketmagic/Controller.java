@@ -130,7 +130,7 @@ public class Controller {
             painter.hidePlayerBuff(spell);
             logic.updatePlayerState("hide");
         } else  {
-            //painter.hidePlayerCast(spell);
+            painter.hidePlayerCast(spell);
         }
     }
 
@@ -154,7 +154,7 @@ public class Controller {
         if (logic.getTypeByName(spell).equals("buff")) {
             painter.hideOpponentBuff(spell);
         } else {
-           // painter.hideOpponentCast(spell);
+            painter.hideOpponentCast(spell);
         }
     }
 

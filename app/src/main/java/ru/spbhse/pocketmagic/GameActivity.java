@@ -313,6 +313,8 @@ public class GameActivity extends AppCompatActivity {
                     exhaustingSunBackAnim.recycle();
                     exhaustingSunFrontAnim = null;
                     break;
+                default:
+                    break;
             }
         }
 
@@ -406,6 +408,8 @@ public class GameActivity extends AppCompatActivity {
                     exhaustingSunFrontAnim.recycle();
                     exhaustingSunFrontAnim = null;
                     break;
+                default:
+                    break;
             }
         }
 
@@ -422,16 +426,14 @@ public class GameActivity extends AppCompatActivity {
         public void unlockInput() {
             gestureOverlayView.setVisibility(View.VISIBLE);
         }
-//////////////////////////////////////////////////////////////////////////////////////////////////////
+
         @Override
         public void timerCast(double time) {
             new CountDownTimer((long) (time * 1000), 100) {
                 public void onTick(long millisUntilFinished) {
-                    //timer.setText("cast time: " + millisUntilFinished / 1000 + ":" + millisUntilFinished / 100);
                     timer.setText(millisUntilFinished / 1000 + "." + millisUntilFinished / 100 + "s");
                 }
                 public void onFinish() {
-                    //timer.setText("");
                     timer.setText("");
                 }
             }.start();
