@@ -145,9 +145,9 @@ public class Controller {
             painter.setPlayerBuff(spell);
         }
         if (spellType.equals("effect")) {
-            painter.setOpponentState(logic.opponentState);
             painter.showPlayerCast(spell);
         }
+        painter.setOpponentState(logic.opponentState);
     }
 
     private  void stopOpponentSpell(String spell) {
@@ -390,7 +390,32 @@ public class Controller {
         }
 
         synchronized public void updateOpponentState(String spell) {
-
+            if (spell.equals("hide")) {
+                opponentState = PlayerState.NORMAL;
+            }
+            if (opponentState == PlayerState.SUNNY) {
+                return;
+            }
+            if (spell.equals("SunShield")) {
+                opponentState = PlayerState.SUNNY;
+            }
+            if (spell.equals("Heal")) {
+                opponentState = PlayerState.NORMAL;
+            }
+            if (opponentState == PlayerState.NORMAL && spell.equals("Fog")) {
+                opponentState = PlayerState.FOG;
+            }
+            if (opponentState == PlayerState.FOG && spell.equals("Breeze")) {
+                opponentState = PlayerState.WET;
+            }
+            if (opponentState == PlayerState.FROZEN && spell.equals("FireBall")) {
+                opponentState = PlayerState.FOG;
+            }
+            if (opponentState == PlayerState.WET && spell.equals("Freeze")) {
+                opponentState = PlayerState.FROZEN;
+            } else {
+                opponentState = PlayerState.FREEZING;
+            }
         }
 
         public String ableToThrowTheSpell(String spell) {

@@ -193,7 +193,7 @@ public class GameActivity extends AppCompatActivity {
 
         @Override
         public void setPlayerState(PlayerState state) {
-            if (state == PlayerState.FROZEN) {
+            if (state == PlayerState.FROZEN || state == PlayerState.FREEZING) {
                 playerEffect.setImageResource(R.drawable.effect_frozen_player);
                 playerEffect.setVisibility(View.VISIBLE);
             } else if (state == PlayerState.WET) {
@@ -219,6 +219,9 @@ public class GameActivity extends AppCompatActivity {
                     opponentAvatar.setImageResource(R.drawable.opponent_wet);
                     break;
                 case FROZEN:
+                    opponentAvatar.setImageResource(R.drawable.opponent_cold);
+                    break;
+                case FREEZING:
                     opponentAvatar.setImageResource(R.drawable.opponent_cold);
                     break;
             }
