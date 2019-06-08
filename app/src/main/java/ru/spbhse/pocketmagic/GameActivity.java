@@ -435,6 +435,7 @@ public class GameActivity extends AppCompatActivity {
                 }
                 public void onFinish() {
                     timer.setText("");
+                    unlockInput();
                 }
             }.start();
         }

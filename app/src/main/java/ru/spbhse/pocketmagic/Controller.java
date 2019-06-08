@@ -110,6 +110,7 @@ public class Controller {
     }
 
     private void throwPlayerSpell(String spell) {
+        painter.unlockInput();
         if (isStopped) {
             return;
         }
@@ -122,7 +123,6 @@ public class Controller {
             endGame();
             painter.endGame(GameResult.WIN);
         }
-        painter.unlockInput();
     }
 
     private  void stopPlayerSpell(String spell) {
