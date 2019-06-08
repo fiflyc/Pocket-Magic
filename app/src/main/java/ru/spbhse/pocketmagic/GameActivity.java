@@ -226,8 +226,6 @@ public class GameActivity extends AppCompatActivity {
 
         @Override
         public void showPlayerCast(String spell) {
-            sendNotification(spell);
-
             try {
                 switch (spell) {
                     case "FireBall":

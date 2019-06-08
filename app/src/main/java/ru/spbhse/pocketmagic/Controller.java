@@ -85,7 +85,6 @@ public class Controller {
         if (isStopped) {
             return;
         }
-        painter.sendNotification(logic.getNameById(spellID));
         painter.showOpponentSpell(logic.getNameById(spellID));
         ThrowOpponentSpell throwOpponentSpell = new ThrowOpponentSpell();
         throwOpponentSpell.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, logic.getNameById(spellID));
@@ -104,7 +103,6 @@ public class Controller {
         painter.showOpponentCast(spell);
         logic.opponentSpell(spell);
         painter.setPlayerHP(logic.getPlayerHP());
-        painter.sendNotification("You've got a damage!");
         if (logic.getPlayerHP() == 0) {
             endGame();
             painter.endGame(GameResult.LOSE);

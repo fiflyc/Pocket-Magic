@@ -35,26 +35,31 @@ public class Network {
         @Override
         public void onRoomConnecting(@Nullable Room room) {
             Log.d("Pocket Magic", "Successful connection to room");
+            NetworkController.showMessage("Successful connection to room");
         }
 
         @Override
         public void onRoomAutoMatching(@Nullable Room room) {
             Log.d("Pocket Magic", "New room found");
+            NetworkController.showMessage("New room found");
         }
 
         @Override
         public void onPeerInvitedToRoom(@Nullable Room room, @NonNull List<String> list) {
             Log.d("Pocket Magic", "Receive an invitation to a new room");
+            NetworkController.showMessage("Receive an invitation to a new room");
         }
 
         @Override
         public void onPeerDeclined(@Nullable Room room, @NonNull List<String> list) {
             Log.d("Pocket Magic", "Peer connection declined");
+            NetworkController.showMessage("Peer connection declined");
         }
 
         @Override
         public void onPeerJoined(@Nullable Room room, @NonNull List<String> list) {
             Log.d("Pocket Magic", "Joined with peer connection");
+            NetworkController.showMessage("Joined with peer connection");
         }
 
         @Override
@@ -66,6 +71,7 @@ public class Network {
         @Override
         public void onConnectedToRoom(@Nullable Room room) {
             Log.d("Pocket Magic", "Connected to a new room");
+            NetworkController.showMessage("Connected to a new room");
         }
 
         @Override
@@ -77,6 +83,7 @@ public class Network {
         @Override
         public void onPeersConnected(@Nullable Room room, @NonNull List<String> list) {
             Log.d("Pocket Magic", "Connected with a peer connection");
+            NetworkController.showMessage("Connected with a peer connection");
         }
 
         @Override
@@ -88,6 +95,7 @@ public class Network {
         @Override
         public void onP2PConnected(@NonNull String s) {
             Log.d("Pocket Magic", "P2P connected");
+            NetworkController.showMessage("P2P connected");
         }
 
         @Override
@@ -117,12 +125,14 @@ public class Network {
 
         @Override
         public void onRoomCreated(int i, @Nullable Room room) {
-            Log.d("Pocket Magic", "Room was created");
+            Log.d("Pocket Magic", "Room has been created");
+            NetworkController.showMessage("Room has been created");
         }
 
         @Override
         public void onJoinedRoom(int i, @Nullable Room room) {
             Log.d("Pocket Magic", "Joined to room");
+            NetworkController.showMessage("Joined to room");
         }
 
         @Override
@@ -255,6 +265,15 @@ public class Network {
                     account).leave(roomConfig, room.getRoomId());
             room = null;
         }
+    }
+
+    public String getOpponentName() {
+        for (String id: room.getParticipantIds()) {
+            if (!id.equals(playerID)) {
+                return room.getParticipant(id).getDisplayName();
+            }
+        }
+        return "Your opponent";
     }
 
     public void sendMessage(byte[] message) {

@@ -120,7 +120,7 @@
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/baloo_tamma"
         android:textColor="#9E0F0F"
-        android:textSize="40sp"
+        android:textSize="50sp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/valueMP"
         app:layout_constraintEnd_toEndOf="@+id/gestureListener" />

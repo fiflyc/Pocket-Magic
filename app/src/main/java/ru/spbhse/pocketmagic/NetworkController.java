@@ -51,6 +51,10 @@ public class NetworkController {
         currentController.opponentSpell(spellID);
     }
 
+    public static String getOpponentName() {
+        return network.getOpponentName();
+    }
+
     public static void sendSpell(int spellID) {
         network.sendMessage(ByteBuffer.allocate(4).putInt(spellID).array());
     }
@@ -67,5 +71,11 @@ public class NetworkController {
                         currentActivity.finish();
                     }
                 }).show();
+    }
+
+    public static void showMessage(String message) {
+        if (currentActivity.getClass() == OpponentSearchActivity.class) {
+            ((OpponentSearchActivity) currentActivity).showMessage(message);
+        }
     }
 }

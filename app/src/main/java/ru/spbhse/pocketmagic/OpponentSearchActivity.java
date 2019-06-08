@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -37,6 +38,7 @@ public class OpponentSearchActivity extends AppCompatActivity {
     private RealTimeMultiplayerClient multiplayerClient;
 
     private String playerId;
+    private TextView textMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class OpponentSearchActivity extends AppCompatActivity {
                 finish();
             }
         });
+        textMessage = findViewById(R.id.textMessage);
 
         signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
                 .requestScopes(Games.SCOPE_GAMES_LITE)
@@ -116,5 +119,9 @@ public class OpponentSearchActivity extends AppCompatActivity {
                         finish();
                     }
                 }).show();
+    }
+
+    public void showMessage(String message) {
+        textMessage.setText(message);
     }
 }
