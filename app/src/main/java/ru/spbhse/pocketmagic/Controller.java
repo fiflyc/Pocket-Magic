@@ -417,7 +417,7 @@ public class Controller {
         }
 
         public int getIDByName(String spell) {
-            Cursor cursor = mDb.rawQuery("SELECT id FROM spells WHERE name='" + spell + "'", null);
+            Cursor cursor = mDb.rawQuery("SELECT _id FROM spells WHERE name='" + spell + "'", null);
             cursor.moveToFirst();
             return cursor.getInt(0);
         }

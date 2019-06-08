@@ -99,30 +99,6 @@ public class OpponentSearchActivity extends AppCompatActivity {
     }
 
     private void onConnected() {
-        Log.d("Pocket Magic", "Connected to Google APIs");
-
-        multiplayerClient = Games.getRealTimeMultiplayerClient(this, googleAccount);
-
-        Games
-                .getPlayersClient(this, googleAccount)
-                .getCurrentPlayer()
-                .addOnSuccessListener(new OnSuccessListener<Player>() {
-                    @Override
-                    public void onSuccess(Player player) {
-                        playerId = player.getPlayerId();
-                        findGame();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        showError("Can't get your player ID");
-                    }
-                });
-
-    }
-
-    private void findGame() {
         NetworkController.setUI(this);
         Network network = NetworkController.createNetwork(googleAccount);
         network.findAndStartGame();

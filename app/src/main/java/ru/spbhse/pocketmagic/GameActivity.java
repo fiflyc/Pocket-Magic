@@ -494,6 +494,7 @@ public class GameActivity extends AppCompatActivity {
         if (getIntent().getSerializableExtra("GameType") == GameType.MULTIPLAYER) {
             NetworkController.setUI(this);
             controller = new Controller(painter, GameType.MULTIPLAYER);
+            NetworkController.setUI(this);
         } else {
             controller = new Controller(painter, GameType.BOT);
         }

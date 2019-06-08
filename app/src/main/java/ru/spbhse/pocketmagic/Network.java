@@ -9,6 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesCallbackStatusCodes;
 import com.google.android.gms.games.GamesClient;
+import com.google.android.gms.games.Player;
 import com.google.android.gms.games.RealTimeMultiplayerClient;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.InvitationCallback;
@@ -19,6 +20,7 @@ import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateCallback;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateCallback;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.ByteArrayInputStream;
@@ -126,7 +128,7 @@ public class Network {
         @Override
         public void onLeftRoom(int i, @NonNull String s) {
             Log.d("Pocket Magic", "Left from room");
-            NetworkController.finishGame();
+            NetworkController.showAlert("Disconnected");
         }
 
         @Override
@@ -181,7 +183,9 @@ public class Network {
         this.account = account;
         client = Games.getRealTimeMultiplayerClient(NetworkController.getContext(), account);
         GamesClient gamesClient = Games.getGamesClient(NetworkController.getContext(), account);
-        gamesClient.getActivationHint().addOnSuccessListener(new OnSuccessListener<Bundle>() {
+        gamesClient
+                .getActivationHint()
+                .addOnSuccessListener(new OnSuccessListener<Bundle>() {
                     @Override
                     public void onSuccess(Bundle hint) {
                         if (hint != null) {
@@ -194,6 +198,23 @@ public class Network {
                                 acceptInviteToRoom(invitation.getInvitationId());
                             }
                         }
+                    }
+                });
+
+        Games
+                .getPlayersClient(NetworkController.getContext(), account)
+                .getCurrentPlayer()
+                .addOnSuccessListener(new OnSuccessListener<Player>() {
+                    @Override
+                    public void onSuccess(Player player) {
+                        playerID = player.getPlayerId();
+                        findAndStartGame();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        NetworkController.showAlert("Can't get your player ID");
                     }
                 });
     }
