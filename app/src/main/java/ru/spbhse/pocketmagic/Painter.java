@@ -36,8 +36,6 @@ public interface Painter {
 
     void setOpponentState(PlayerState state);
 
-    void hideOpponentState();
-
     void showPlayerCast(String spell);
 
     void hidePlayerCast(String spell);

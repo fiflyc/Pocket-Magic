@@ -199,6 +199,8 @@ public class GameActivity extends AppCompatActivity {
             } else if (state == PlayerState.WET) {
                 playerEffect.setImageResource(R.drawable.effect_wet_player);
                 playerEffect.setVisibility(View.VISIBLE);
+            } else if (state == PlayerState.NORMAL) {
+                playerEffect.setVisibility(View.INVISIBLE);
             }
         }
 
@@ -209,12 +211,17 @@ public class GameActivity extends AppCompatActivity {
 
         @Override
         public void setOpponentState(PlayerState state) {
-            /* TODO */
-        }
-
-        @Override
-        public void hideOpponentState() {
-            /* TODO */
+            switch (state) {
+                case NORMAL:
+                    opponentAvatar.setImageResource(R.drawable.opponent_normal);
+                    break;
+                case WET:
+                    opponentAvatar.setImageResource(R.drawable.opponent_wet);
+                    break;
+                case FROZEN:
+                    opponentAvatar.setImageResource(R.drawable.opponent_cold);
+                    break;
+            }
         }
 
         @Override

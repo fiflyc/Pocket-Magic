@@ -10,14 +10,15 @@
 
     <ImageView
         android:id="@+id/opponentAvatar"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
         android:scaleType="fitEnd"
         app:layout_constraintBottom_toBottomOf="@+id/gestureListener"
-        app:layout_constraintTop_toTopOf="@+id/gestureListener"
-        app:srcCompat="@drawable/temp_bot_image" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/opponent_normal" />
 
     <ImageView
         android:id="@+id/fog"
@@ -110,66 +111,6 @@
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/opponentHP" />
-
-    <TextView
-        android:id="@+id/valueOHP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/baloo_tamma"
-        android:text="20/20"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textColor="@android:color/background_light"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/opponentHP"
-        app:layout_constraintEnd_toEndOf="@+id/opponentHP"
-        app:layout_constraintHorizontal_bias="0.50"
-        app:layout_constraintStart_toStartOf="@+id/opponentHP"
-        app:layout_constraintTop_toTopOf="@+id/opponentHP" />
-
-    <TextView
-        android:id="@+id/valueMP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/baloo_tamma"
-        android:text="20/20"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textColor="@android:color/background_light"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/playerMP"
-        app:layout_constraintEnd_toEndOf="@+id/playerMP"
-        app:layout_constraintHorizontal_bias="0.50"
-        app:layout_constraintStart_toStartOf="@+id/playerMP"
-        app:layout_constraintTop_toTopOf="@+id/playerMP" />
-
-    <TextView
-        android:id="@+id/valueHP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/baloo_tamma"
-        android:text="20/20"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textColor="@android:color/background_light"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/playerHP"
-        app:layout_constraintEnd_toEndOf="@+id/playerHP"
-        app:layout_constraintHorizontal_bias="0.50"
-        app:layout_constraintStart_toStartOf="@+id/playerHP"
-        app:layout_constraintTop_toTopOf="@+id/playerHP" />
 
     <TextView
         android:id="@+id/timer"
@@ -306,5 +247,65 @@
         app:layout_constraintBottom_toTopOf="@+id/playerHP"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/valueHP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/baloo_tamma"
+        android:text="20/20"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/playerHP"
+        app:layout_constraintEnd_toEndOf="@+id/playerHP"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintStart_toStartOf="@+id/playerHP"
+        app:layout_constraintTop_toTopOf="@+id/playerHP" />
+
+    <TextView
+        android:id="@+id/valueOHP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/baloo_tamma"
+        android:text="20/20"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/opponentHP"
+        app:layout_constraintEnd_toEndOf="@+id/opponentHP"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintStart_toStartOf="@+id/opponentHP"
+        app:layout_constraintTop_toTopOf="@+id/opponentHP" />
+
+    <TextView
+        android:id="@+id/valueMP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/baloo_tamma"
+        android:text="20/20"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/playerMP"
+        app:layout_constraintEnd_toEndOf="@+id/playerMP"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintStart_toStartOf="@+id/playerMP"
+        app:layout_constraintTop_toTopOf="@+id/playerMP" />
 
 </android.support.constraint.ConstraintLayout>

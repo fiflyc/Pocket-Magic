@@ -46,11 +46,11 @@ public class Controller {
         painter.setPlayerMP(logic.getPlayerMP());
         painter.setOpponentHP(logic.getOpponentHP());
         if (type == GameType.BOT) {
-            painter.setOpponentName("Kappa, the Twitch meme");
+            painter.setOpponentName("Bot");
             bot = new Bot();
             bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
-            painter.setOpponentName("Waiting...");
+            painter.setOpponentName("Your opponent");
         }
         generation = new ManaGenerator();
         generation.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
