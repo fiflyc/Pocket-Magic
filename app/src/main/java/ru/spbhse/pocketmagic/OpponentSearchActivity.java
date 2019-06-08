@@ -22,6 +22,7 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.Player;
 import com.google.android.gms.games.RealTimeMultiplayerClient;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -29,7 +30,6 @@ import com.google.android.gms.tasks.Task;
 public class OpponentSearchActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 42;
-    private static final int RC_REQUEST_PERMISSIONS_SUCCESS = 1000;
 
     private GoogleSignInOptions signInOptions;
     private GoogleSignInAccount googleAccount;
@@ -71,18 +71,9 @@ public class OpponentSearchActivity extends AppCompatActivity {
 
         googleAccount = GoogleSignIn.getLastSignedInAccount(this);
         if (googleAccount == null) {
-            Log.wtf("Pocket Magic", "Need sign in");
+            Log.d("Pocket Magic", "Need sign in");
             startActivityForResult(googleClient.getSignInIntent(), RC_SIGN_IN);
-        } else if (GoogleSignIn.hasPermissions(googleAccount, signInOptions.getScopeArray())) {
-            Log.wtf("Pocket Magic", "not enough permissions");
-            GoogleSignIn.requestPermissions(
-                    this,
-                    RC_REQUEST_PERMISSIONS_SUCCESS,
-                    googleAccount,
-                    signInOptions.getScopeArray()
-                );
         } else {
-            Log.wtf("Pocket Magic", "Get account");
             onConnected();
         }
     }
@@ -104,33 +95,37 @@ public class OpponentSearchActivity extends AppCompatActivity {
                     showError("Google API error " + CommonStatusCodes.getStatusCodeString(e.getStatusCode()));
                 }
             }
-        } else if (requestCode == RC_REQUEST_PERMISSIONS_SUCCESS) {
-            Log.wtf("Pocket Magic", "Now got all permissions");
-            onConnected();
         }
     }
 
     private void onConnected() {
-        Log.wtf("Pocket Magic", "Connected to Google APIs");
-        if (googleAccount != null) {
-            multiplayerClient = Games.getRealTimeMultiplayerClient(this, googleAccount);
+        Log.d("Pocket Magic", "Connected to Google APIs");
 
-            Games
-                    .getPlayersClient(this, googleAccount)
-                    .getCurrentPlayer()
-                    .addOnSuccessListener(new OnSuccessListener<Player>() {
-                        @Override
-                        public void onSuccess(Player player) {
-                            playerId = player.getPlayerId();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            showError("Can't get your player ID");
-                        }
-                    });
-        }
+        multiplayerClient = Games.getRealTimeMultiplayerClient(this, googleAccount);
+
+        Games
+                .getPlayersClient(this, googleAccount)
+                .getCurrentPlayer()
+                .addOnSuccessListener(new OnSuccessListener<Player>() {
+                    @Override
+                    public void onSuccess(Player player) {
+                        playerId = player.getPlayerId();
+                        findGame();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        showError("Can't get your player ID");
+                    }
+                });
+
+    }
+
+    private void findGame() {
+        NetworkController.setUI(this);
+        Network network = NetworkController.createNetwork(googleAccount);
+        network.findAndStartGame();
     }
 
     private void showError(String message) {

@@ -98,43 +98,6 @@
         app:layout_constraintTop_toBottomOf="@+id/opponentBuffB"
         app:srcCompat="@mipmap/ic_launcher_background" />
 
-    <ProgressBar
-        android:id="@+id/playerHP"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:max="20"
-        android:progress="20"
-        android:progressDrawable="@drawable/player_hp_progress"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/playerMP"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:max="20"
-        android:progress="20"
-        android:progressDrawable="@drawable/player_mp_progress"
-        app:layout_constraintBottom_toTopOf="@+id/playerHP"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/opponentHP"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:max="20"
-        android:progress="20"
-        android:progressDrawable="@drawable/opponent_hp_progress"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/opponentName"
         android:layout_width="wrap_content"
@@ -208,34 +171,18 @@
         app:layout_constraintStart_toStartOf="@+id/playerHP"
         app:layout_constraintTop_toTopOf="@+id/playerHP" />
 
-    <android.gesture.GestureOverlayView
-        android:id="@+id/gestureListener"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fadeDuration="0"
-        android:fadeOffset="0"
-        android:gestureColor="#C1260547"
-        android:gestureStrokeWidth="50"
-        android:uncertainGestureColor="#C1260547"
-        app:layout_constraintBottom_toTopOf="@+id/playerMP"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/opponentHP"
-        app:layout_constraintVertical_bias="1.0">
-
-        <TextView
-            android:id="@+id/timer"
-            android:layout_width="wrap_content"
-            android:layout_height="37dp"
-            android:fontFamily="@font/baloo_tamma"
-            android:textColor="@android:color/background_dark"
-            android:textSize="25sp"
-            android:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@+id/opponentHP"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp" />
-    </android.gesture.GestureOverlayView>
+    <TextView
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/baloo_tamma"
+        android:textColor="#9E0F0F"
+        android:textSize="40sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/valueMP"
+        app:layout_constraintEnd_toEndOf="@+id/gestureListener" />
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/playerSun"
@@ -304,5 +251,60 @@
         app:layout_constraintBottom_toTopOf="@+id/playerBuffB"
         app:layout_constraintStart_toStartOf="@id/gestureListener"
         app:layout_constraintTop_toBottomOf="@+id/opponentSpell" />
+
+    <android.gesture.GestureOverlayView
+        android:id="@+id/gestureListener"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fadeDuration="0"
+        android:fadeOffset="0"
+        android:gestureColor="#C1260547"
+        android:gestureStrokeWidth="50"
+        android:uncertainGestureColor="#C1260547"
+        app:layout_constraintBottom_toTopOf="@+id/playerMP"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/opponentHP"
+        app:layout_constraintVertical_bias="1.0">
+
+    </android.gesture.GestureOverlayView>
+
+    <ProgressBar
+        android:id="@+id/opponentHP"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:max="20"
+        android:progress="20"
+        android:progressDrawable="@drawable/opponent_hp_progress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/playerHP"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:max="20"
+        android:progress="20"
+        android:progressDrawable="@drawable/player_hp_progress"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/playerMP"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:max="20"
+        android:progress="20"
+        android:progressDrawable="@drawable/player_mp_progress"
+        app:layout_constraintBottom_toTopOf="@+id/playerHP"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

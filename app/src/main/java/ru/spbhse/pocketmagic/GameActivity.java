@@ -423,11 +423,11 @@ public class GameActivity extends AppCompatActivity {
             new CountDownTimer((long) (time * 1000), 100) {
                 public void onTick(long millisUntilFinished) {
                     //timer.setText("cast time: " + millisUntilFinished / 1000 + ":" + millisUntilFinished / 100);
-                    opponentName.setText("cast time: " + millisUntilFinished / 1000 + ":" + millisUntilFinished / 100);
+                    timer.setText(millisUntilFinished / 1000 + "." + millisUntilFinished / 100 + "s");
                 }
                 public void onFinish() {
                     //timer.setText("");
-                    opponentName.setText("");
+                    timer.setText("");
                 }
             }.start();
         }

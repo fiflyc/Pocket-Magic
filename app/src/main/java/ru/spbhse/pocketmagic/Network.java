@@ -8,7 +8,11 @@ import android.util.Log;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesCallbackStatusCodes;
+import com.google.android.gms.games.GamesClient;
 import com.google.android.gms.games.RealTimeMultiplayerClient;
+import com.google.android.gms.games.multiplayer.Invitation;
+import com.google.android.gms.games.multiplayer.InvitationCallback;
+import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.OnRealTimeMessageReceivedListener;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.Room;
@@ -154,6 +158,19 @@ public class Network {
         }
     }
 
+    private InvitationCallback invitationCallback = new InvitationCallback() {
+
+        @Override
+        public void onInvitationReceived(@NonNull Invitation invitation) {
+            Log.wtf("Pocket Magic", "Got invitation!");
+        }
+
+        @Override
+        public void onInvitationRemoved(@NonNull String invitationId) {
+            Log.wtf("Pocket Magic", "Invitation removed");
+        }
+    };
+
     private RoomConfig roomConfig;
     private Room room;
     private GoogleSignInAccount account;
@@ -162,8 +179,23 @@ public class Network {
 
     public Network(GoogleSignInAccount account) {
         this.account = account;
-        client = Games.getRealTimeMultiplayerClient(NetworkController.getContext(),
-                this.account);
+        client = Games.getRealTimeMultiplayerClient(NetworkController.getContext(), account);
+        GamesClient gamesClient = Games.getGamesClient(NetworkController.getContext(), account);
+        gamesClient.getActivationHint().addOnSuccessListener(new OnSuccessListener<Bundle>() {
+                    @Override
+                    public void onSuccess(Bundle hint) {
+                        if (hint != null) {
+                            Invitation invitation =
+                                    hint.getParcelable(Multiplayer.EXTRA_INVITATION);
+
+                            if (invitation != null && invitation.getInvitationId() != null) {
+                                // retrieve and cache the invitation ID
+                                Log.d("Pocket Magic", "Connection hint has a room invite!");
+                                acceptInviteToRoom(invitation.getInvitationId());
+                            }
+                        }
+                    }
+                });
     }
 
     public void findAndStartGame() {
@@ -175,12 +207,28 @@ public class Network {
                 .setAutoMatchCriteria(autoMatchCriteria)
                 .build();
 
-        Log.wtf("Pocket Magic", "Prepared for creating a room");
         client.create(roomConfig);
-        Log.wtf("Pocket Magic", "Room created");
     }
 
-    public void leaveRoom() {
+    private void acceptInviteToRoom(String invitationId) {
+        Log.d("Pocket Magic", "Accepting invitation: " + invitationId);
+
+        roomConfig = RoomConfig.builder(this.new CallbackUpdater())
+                .setInvitationIdToAccept(invitationId)
+                .setOnMessageReceivedListener(this.new MessageListener())
+                .setRoomStatusUpdateCallback(this.new CallbackHandler())
+                .build();
+
+        client.join(roomConfig)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Pocket Magic", "Room Joined Successfully!");
+                    }
+                });
+    }
+
+    private void leaveRoom() {
         if (room != null) {
             Games.getRealTimeMultiplayerClient(NetworkController.getContext(),
                     account).leave(roomConfig, room.getRoomId());
