@@ -50,7 +50,8 @@ public class Controller {
             bot = new Bot();
             bot.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
-            painter.setOpponentName("Your opponent");
+            //painter.setOpponentName("Your opponent");
+            painter.setOpponentName(NetworkController.getOpponentName());
         }
         generation = new ManaGenerator();
         generation.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -100,7 +101,8 @@ public class Controller {
             return;
         }
         painter.hideOpponentSpell();
-        painter.showOpponentCast(spell);
+        //painter.showOpponentCast(spell);
+        showOpponentCast(spell);
         logic.opponentSpell(spell);
         painter.setPlayerHP(logic.getPlayerHP());
         if (logic.getPlayerHP() == 0) {
@@ -150,6 +152,13 @@ public class Controller {
         if (spellType.equals("effect")) {
             painter.showPlayerCast(spell);
         }
+    }
+
+    private void showOpponentCast(String spell) {
+        if (logic.getTypeByName(spell).equals("buff")) {
+            painter.showOpponentBuff(spell);
+        }
+        painter.showOpponentCast(spell);
     }
 
     private  void stopOpponentSpell(String spell) {
