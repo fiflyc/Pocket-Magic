@@ -130,14 +130,17 @@ public class Controller {
             painter.hidePlayerBuff(spell);
             logic.updatePlayerState("hide");
         } else  {
+            logic.updateOpponentState("after spell");
             painter.hidePlayerCast(spell);
         }
+        painter.setPlayerState(logic.playerState);
+        painter.setOpponentState(logic.opponentState);
     }
 
     private void showPlayerCast(String spell) {
+        painter.setOpponentState(logic.opponentState);
         String spellType = logic.getTypeByName(spell);
         if (spellType.equals("spell")) {
-            Log.wtf("Pocket Magic", "Spell type is " + spellType);
             painter.showPlayerCast(spell);
         }
         if (spellType.equals("buff")) {
@@ -147,26 +150,37 @@ public class Controller {
         if (spellType.equals("effect")) {
             painter.showPlayerCast(spell);
         }
-        painter.setOpponentState(logic.opponentState);
     }
 
     private  void stopOpponentSpell(String spell) {
         if (logic.getTypeByName(spell).equals("buff")) {
             painter.hideOpponentBuff(spell);
+            logic.updateOpponentState("hide");
         } else {
             painter.hideOpponentCast(spell);
+            logic.updatePlayerState("after spell");
         }
+        painter.hidePlayerState();
+        painter.setPlayerState(logic.playerState);
+        painter.setOpponentState(logic.opponentState);
     }
 
     private class ThrowOpponentSpell extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... spells) {
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.MILLISECONDS.sleep((long) (logic.getCastByName(spells[0]) * 1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            publishProgress(spells);
+            for (int i = 0; i < logic.getDurationByName(spells[0]); i++) {
+                publishProgress(spells);
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             return spells[0];
         }
 
@@ -191,12 +205,12 @@ public class Controller {
                 e.printStackTrace();
             }
             for (int i = 0; i < logic.getDurationByName(spells[0]); i++) {
+                publishProgress(spells);
                 try {
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                publishProgress(spells);
             }
             return spells[0];
         }
@@ -326,11 +340,6 @@ public class Controller {
             opponentHP = max(opponentHP, 0);
             updateOpponentState(spell);
         }
-        public void stopPlayerSpell(String spell) {
-            if (spell.equals("SunShield")) {
-                playerState = PlayerState.NORMAL;
-            }
-        }
 
         public int calcPlayerDamage(String spell) {
             int result = getDamageByName(spell);
@@ -357,11 +366,13 @@ public class Controller {
         synchronized public void opponentSpell(String spell) {
             playerHP -= calcPlayerDamage(spell);
             playerHP = max(playerHP, 0);
+            opponentHP += getHealingByName(spell);
+            opponentHP = min(opponentHP, MAX_HP);
             updatePlayerState(spell);
         }
 
         synchronized public void updatePlayerState(String spell) {
-            if (spell.equals("hide")) {
+            if (spell.equals("hide") || spell.equals("after spell")) {
                 playerState = PlayerState.NORMAL;
             }
             if (playerState == PlayerState.SUNNY) {
@@ -384,13 +395,14 @@ public class Controller {
             }
             if (playerState == PlayerState.WET && spell.equals("Freeze")) {
                 playerState = PlayerState.FROZEN;
-            } else {
+            }
+            if (spell.equals("Freeze")) {
                 playerState = PlayerState.FREEZING;
             }
         }
 
         synchronized public void updateOpponentState(String spell) {
-            if (spell.equals("hide")) {
+            if (spell.equals("hide") || spell.equals("after spell")) {
                 opponentState = PlayerState.NORMAL;
             }
             if (opponentState == PlayerState.SUNNY) {
@@ -413,7 +425,8 @@ public class Controller {
             }
             if (opponentState == PlayerState.WET && spell.equals("Freeze")) {
                 opponentState = PlayerState.FROZEN;
-            } else {
+            }
+            if (spell.equals("Freeze")) {
                 opponentState = PlayerState.FREEZING;
             }
         }
@@ -421,6 +434,9 @@ public class Controller {
         public String ableToThrowTheSpell(String spell) {
             if (spell.equals("ExhaustingSun") && playerState.equals(PlayerState.FOG)) {
                 return "You can't cast ExhaustingSun through the fog";
+            }
+            if (playerState == PlayerState.FROZEN || playerState == PlayerState.FREEZING) {
+                return "You are frozen and not able to cast spells";
             }
             if (playerMP < getCostByName(spell) ) {
                 return ("Not enough mana for the spell " + spell);
