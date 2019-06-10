@@ -34,20 +34,23 @@ public class Network {
 
         @Override
         public void onRoomConnecting(@Nullable Room room) {
-            Log.d("Pocket Magic", "Successful connection to room");
-            NetworkController.showMessage("Successful connection to room");
+            Log.d("Pocket Magic", "Connection to room...");
+            NetworkController.showMessage("Connection to room...");
+            Network.this.room = room;
         }
 
         @Override
         public void onRoomAutoMatching(@Nullable Room room) {
             Log.d("Pocket Magic", "New room found");
             NetworkController.showMessage("New room found");
+            Network.this.room = room;
         }
 
         @Override
         public void onPeerInvitedToRoom(@Nullable Room room, @NonNull List<String> list) {
             Log.d("Pocket Magic", "Receive an invitation to a new room");
             NetworkController.showMessage("Receive an invitation to a new room");
+            Network.this.room = room;
         }
 
         @Override
@@ -60,6 +63,7 @@ public class Network {
         public void onPeerJoined(@Nullable Room room, @NonNull List<String> list) {
             Log.d("Pocket Magic", "Joined with peer connection");
             NetworkController.showMessage("Joined with peer connection");
+            Network.this.room = room;
         }
 
         @Override
@@ -72,6 +76,7 @@ public class Network {
         public void onConnectedToRoom(@Nullable Room room) {
             Log.d("Pocket Magic", "Connected to a new room");
             NetworkController.showMessage("Connected to a new room");
+            Network.this.room = room;
         }
 
         @Override
@@ -84,6 +89,7 @@ public class Network {
         public void onPeersConnected(@Nullable Room room, @NonNull List<String> list) {
             Log.d("Pocket Magic", "Connected with a peer connection");
             NetworkController.showMessage("Connected with a peer connection");
+            Network.this.room = room;
         }
 
         @Override
