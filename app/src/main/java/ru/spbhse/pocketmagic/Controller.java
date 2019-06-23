@@ -40,8 +40,8 @@ public class Controller {
     }
 
     private void startGame() {
-        painter.setMaxHP(logic.getMaxHp());
-        painter.setMaxMP(logic.getMaxMp());
+        painter.setMaxHP(logic.MAX_HP);
+        painter.setMaxMP(logic.MAX_MP);
         painter.setPlayerHP(logic.getPlayerHP());
         painter.setPlayerMP(logic.getPlayerMP());
         painter.setOpponentHP(logic.getOpponentHP());
@@ -244,7 +244,7 @@ public class Controller {
 
     /** Bot -- opponent imitation in other thread. */
     private class Bot extends AsyncTask<Void, Void, Void> {
-        private boolean isAlive = true;
+        private volatile boolean isAlive = true;
         private Random random = new Random();
 
         public void stop(){
@@ -337,14 +337,6 @@ public class Controller {
 
         private int getPlayerMP() {
             return playerMP;
-        }
-
-        private int getMaxHp() {
-            return MAX_HP;
-        }
-
-        private int getMaxMp() {
-            return MAX_MP;
         }
 
         synchronized private void initializeCast(String spell) {
