@@ -69,6 +69,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+            throw new Error(e);
         }
     }
 

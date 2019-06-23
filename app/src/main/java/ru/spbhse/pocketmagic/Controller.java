@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -316,7 +317,7 @@ public class Controller {
             mDBHelper = new DatabaseHelper(painter.getContext());
             try {
                 mDBHelper.updateDataBase();
-            } catch (IOException mIOException) {
+            } catch (Error e) {
                 throw new Error("UnableToUpdateDatabase");
             }
             try {
@@ -515,8 +516,8 @@ public class Controller {
             return cursor.getInt(0);
         }
 
-        private ArrayList<Spell> getAllSpells() {
-            ArrayList<Spell> result = new ArrayList<Spell>();
+        private List<Spell> getAllSpells() {
+            List<Spell> result = new ArrayList<Spell>();
             Cursor cursor = mDb.rawQuery("SELECT * FROM spells", null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -528,8 +529,8 @@ public class Controller {
             return result;
         }
 
-        private ArrayList<String> getAllSpellNames() {
-            ArrayList<String> result = new ArrayList<String>();
+        private List<String> getAllSpellNames() {
+            List<String> result = new ArrayList<String>();
             Cursor cursor = mDb.rawQuery("SELECT name FROM spells", null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
